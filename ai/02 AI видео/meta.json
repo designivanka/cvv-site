@@ -1,0 +1,18 @@
+{
+  "title": {
+    "en": "AI video",
+    "ru": "AI видео"
+  },
+  "subtitle": {
+    "en": "Generated video: a car-show promo with drift and smoke, aerial and event shots (Seedance, Magnific), and a product-style scene. Camera moves, physics and atmosphere built with AI video models.",
+    "ru": "Генеративное видео: промо автошоу с дрифтом и дымом, съёмка с дрона и ивент-сцены (Seedance, Magnific), предметная сцена. Движение камеры, физика и атмосфера — средствами AI-видеомоделей."
+  },
+  "cover": "Cars-Seedance-01.jpg",
+  "order": [
+    "Cars-Show",
+    "Cars-Seedance-01",
+    "Cars-Seedance-02",
+    "Cars-Magnific-01",
+    "Magnific-01"
+  ]
+}
