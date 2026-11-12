@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Playables — Ivanova Yanina</title>
+<link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0c; --card: #16161f; --text: #f4f4f5; --muted: #a1a1aa;
+    --cyan: #5eead4; --violet: #a78bfa; --pink: #f472b6; --border: rgba(255,255,255,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: 'DM Sans', system-ui, sans-serif;
+    min-height: 100vh; overflow-x: hidden;
+    background-image:
+      radial-gradient(800px 500px at 10% -10%, rgba(167,139,250,.14), transparent 60%),
+      radial-gradient(700px 500px at 100% 0%, rgba(94,234,212,.10), transparent 60%);
+    background-attachment: fixed;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: min(1180px, 92vw); margin: 0 auto; }
+
+  header { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px);
+    background: rgba(10,10,12,.7); border-bottom: 1px solid var(--border); }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 1rem; }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.05rem; letter-spacing: -.01em; }
+  .logo small { display: block; font-family: 'DM Sans'; font-weight: 500; font-size: .62rem;
+    letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  .actions { display: flex; gap: .5rem; align-items: center; }
+  .pill { font-size: .78rem; font-weight: 600; padding: .5rem .9rem; border-radius: 999px;
+    border: 1px solid var(--border); color: var(--muted); background: none; cursor: pointer;
+    font-family: inherit; transition: color .2s, border-color .2s; }
+  .pill:hover { color: var(--cyan); border-color: rgba(94,234,212,.4); }
+  .lang button.is-active { color: var(--bg); background: var(--cyan); border-color: var(--cyan); }
+
+  .hero { padding: 3.5rem 0 2rem; }
+  .eyebrow { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--cyan); font-weight: 600; }
+  h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.02;
+    letter-spacing: -.03em; margin: .6rem 0 1rem; }
+  h1 span { background: linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { color: var(--muted); max-width: 640px; line-height: 1.6; }
+  .facts { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.4rem; }
+  .fact { font-size: .78rem; padding: .4rem .75rem; border-radius: 999px; background: rgba(255,255,255,.04);
+    border: 1px solid var(--border); color: var(--muted); }
+
+  .filters { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0 2rem; }
+  .filters button.is-active { color: var(--text); border-color: rgba(167,139,250,.6); background: rgba(167,139,250,.12); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 2.2rem 1.6rem; padding-bottom: 5rem; }
+  .card { display: flex; flex-direction: column; align-items: center; gap: .9rem; }
+  .card[hidden] { display: none; }
+  .phone { position: relative; width: 100%; max-width: 280px; aspect-ratio: 9 / 19.5; border-radius: 38px;
+    padding: 10px; background: linear-gradient(160deg, #2a2a35, #0f0f14); border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 30px 60px rgba(0,0,0,.55), inset 0 0 0 2px rgba(255,255,255,.03); transition: transform .3s, box-shadow .3s; }
+  .card:hover .phone { transform: translateY(-4px); box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(94,234,212,.25); }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 29px; overflow: hidden; background: #000; }
+  .screen iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+  .notch { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); width: 34%; height: 20px;
+    border-radius: 999px; background: #000; z-index: 2; pointer-events: none; }
+  .placeholder { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; color: var(--muted);
+    font-size: .8rem; background: radial-gradient(circle at 50% 40%, rgba(167,139,250,.18), transparent 60%); }
+  .placeholder b { display: grid; place-items: center; width: 64px; height: 64px; margin: 0 auto .7rem; border-radius: 50%;
+    background: rgba(94,234,212,.15); color: var(--cyan); font-size: 1.4rem; }
+  .meta { text-align: center; }
+  .game { font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; color: var(--violet); font-weight: 600; }
+  .title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; margin-top: .2rem; }
+  .row { display: flex; gap: .4rem; justify-content: center; margin-top: .6rem; }
+  .row .pill { font-size: .72rem; padding: .4rem .75rem; }
+
+  footer { border-top: 1px solid var(--border); padding: 1.6rem 0 2.2rem; color: var(--muted); font-size: .8rem; }
+  footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  @media (max-width: 560px) { .grid { grid-template-columns: 1fr 1fr; gap: 1.6rem .9rem; } .phone { border-radius: 26px; padding: 6px; }
+    .screen { border-radius: 21px; } .notch { height: 14px; top: 11px; } .hero { padding-top: 2.2rem; } .back-text { display: none; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <a class="logo" href="./">Ivanova Yanina<small>Motion Designer</small></a>
+    <div class="actions">
+      <a class="pill" href="./" data-i18n="back">← На сайт</a>
+      <span class="lang"><button class="pill" data-lang="en">EN</button> <button class="pill" data-lang="ru">RU</button></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow" data-i18n="eyebrow">Интерактивная реклама</p>
+    <h1 data-i18n-html="title">Мои <span>плейблы</span></h1>
+    <p class="lead" data-i18n="lead">HTML5 playable ads для мобильных игр: геймплей, туториал, эндкард и клик в стор. Играйте прямо в превью — или откройте любой плейбл на весь экран.</p>
+    <div class="facts">
+      <span class="fact">AppLovin · MRAID 2.0</span>
+      <span class="fact" data-i18n="fact1">Один HTML-файл &lt; 5 MB</span>
+      <span class="fact" data-i18n="fact2">Portrait + landscape</span>
+      <span class="fact" data-i18n="fact3">Без внешних запросов</span>
+    </div>
+  </section>
+
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Ivanova Yanina</span>
+    <a href="./" data-i18n="footer">Портфолио целиком →</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var I18N = {
+    ru: { back: '← На сайт', eyebrow: 'Интерактивная реклама', title: 'Мои <span>плейблы</span>',
+      lead: 'HTML5 playable ads для мобильных игр: геймплей, туториал, эндкард и клик в стор. Играйте прямо в превью — или откройте любой плейбл на весь экран.',
+      fact1: 'Один HTML-файл < 5 MB', fact2: 'Portrait + landscape', fact3: 'Без внешних запросов',
+      all: 'Все', play: 'Играть', loading: 'Загрузка…', full: 'На весь экран ↗', restart: '↻ Заново', footer: 'Портфолио целиком →' },
+    en: { back: '← Back to site', eyebrow: 'Interactive ads', title: 'My <span>playables</span>',
+      lead: 'HTML5 playable ads for mobile games: gameplay, tutorial, end card and store click-through. Play right in the preview — or open any playable full screen.',
+      fact1: 'Single HTML file < 5 MB', fact2: 'Portrait + landscape', fact3: 'No external requests',
+      all: 'All', play: 'Play', loading: 'Loading…', full: 'Full screen ↗', restart: '↻ Restart', footer: 'Full portfolio →' }
+  };
+  var GAMES = { AM: 'Arrow Master', DM: 'Dominoes' };
+  var NAMES = { woman: 'Woman', colors: 'Colors', cubegold: 'Cube Gold', halloween: 'Halloween',
+    choose: 'Choose', rasta: 'Rasta' };
+  var BY_NUM = { '109': 'Halloween · Pumpkin', '110': 'Halloween · Witch Cat' };
+
+  var params = new URLSearchParams(location.search);
+  var lang = params.get('lang');
+  if (lang !== 'ru' && lang !== 'en') { try { lang = localStorage.getItem('cvv-lang'); } catch (e) {} }
+  if (lang !== 'ru' && lang !== 'en') lang = 'ru';
+
+  var grid = document.getElementById('grid');
+  var filtersEl = document.getElementById('filters');
+  var items = [];
+  var activeGame = 'all';
+
+  function parse(file) {
+    var m = file.replace(/\.html$/i, '').match(/^([A-Z]+)_playable_(\d+)_([^_]+)/i);
+    var code = m ? m[1].toUpperCase() : '';
+    var key = m ? m[3].toLowerCase() : file;
+    var name = NAMES[key] || (key.charAt(0).toUpperCase() + key.slice(1));
+    var num = m ? String(parseInt(m[2], 10)) : '';
+    if (BY_NUM[num]) name = BY_NUM[num];
+    return { file: file, game: GAMES[code] || code || 'Playable', name: name, num: num };
+  }
+
+  function applyLang() {
+    var t = I18N[lang];
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = t[el.getAttribute('data-i18n')]; });
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) { el.innerHTML = t[el.getAttribute('data-i18n-html')]; });
+    document.querySelectorAll('[data-lang]').forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-lang') === lang); });
+    document.querySelectorAll('[data-t]').forEach(function (el) { el.textContent = t[el.getAttribute('data-t')]; });
+    var allBtn = filtersEl.querySelector('[data-game="all"]'); if (allBtn) allBtn.textContent = t.all;
+  }
+
+  function load(card) {
+    var screen = card.querySelector('.screen');
+    if (screen.querySelector('iframe')) return;
+    var f = document.createElement('iframe');
+    f.src = card.dataset.src;
+    f.title = card.dataset.title;
+    f.setAttribute('allow', 'autoplay; fullscreen');
+    f.setAttribute('loading', 'lazy');
+    screen.appendChild(f);
+    var ph = screen.querySelector('.placeholder'); if (ph) ph.remove();
+  }
+  function unload(card) {
+    var screen = card.querySelector('.screen');
+    var f = screen.querySelector('iframe');
+    if (!f) return;
+    f.remove();
+    screen.insertAdjacentHTML('beforeend', '<div class="placeholder"><div><b>▶</b><span data-t="play">' + I18N[lang].play + '</span></div></div>');
+  }
+
+  // Run only playables near the viewport so the page stays light
+  var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) load(e.target); else unload(e.target); });
+  }, { rootMargin: '200px 0px' }) : null;
+
+  function render(list) {
+    var games = [];
+    list.forEach(function (p) { if (games.indexOf(p.game) === -1) games.push(p.game); });
+    filtersEl.innerHTML = '<button class="pill is-active" data-game="all"></button>' +
+      games.map(function (g) { return '<button class="pill" data-game="' + g + '">' + g + '</button>'; }).join('');
+    filtersEl.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      activeGame = b.dataset.game;
+      filtersEl.querySelectorAll('button').forEach(function (x) { x.classList.toggle('is-active', x === b); });
+      items.forEach(function (c) { c.hidden = !(activeGame === 'all' || c.dataset.game === activeGame); });
+    });
+
+    list.forEach(function (p) {
+      var src = './playable/' + encodeURIComponent(p.file);
+      var card = document.createElement('article');
+      card.className = 'card';
+      card.dataset.src = src; card.dataset.game = p.game; card.dataset.title = p.game + ' — ' + p.name;
+      card.innerHTML =
+        '<div class="phone"><div class="screen"><span class="notch"></span>' +
+        '<div class="placeholder"><div><b>▶</b><span data-t="play"></span></div></div></div></div>' +
+        '<div class="meta"><div class="game"></div><div class="title"></div>' +
+        '<div class="row"><button class="pill" data-t="restart"></button><a class="pill" target="_blank" rel="noreferrer" data-t="full"></a></div></div>';
+      card.querySelector('.game').textContent = p.game;
+      card.querySelector('.title').textContent = p.name;
+      card.querySelector('a').href = src;
+      card.querySelector('.row button').addEventListener('click', function () { unload(card); load(card); });
+      card.querySelector('.placeholder').addEventListener('click', function () { load(card); });
+      grid.appendChild(card);
+      items.push(card);
+      if (io) io.observe(card); else load(card);
+    });
+    applyLang();
+  }
+
+  document.querySelectorAll('[data-lang]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      lang = b.getAttribute('data-lang');
+      try { localStorage.setItem('cvv-lang', lang); } catch (e) {}
+      applyLang();
+    });
+  });
+
+  applyLang();
+  fetch('./playables.json', { cache: 'no-cache' })
+    .then(function (r) { return r.json(); })
+    .then(function (files) { render(files.map(parse)); })
+    .catch(function () { grid.textContent = 'Could not load the list of playables.'; });
+})();
+</script>
+</body>
+</html>
