@@ -1,0 +1,10 @@
+{
+  "title": { "en": "2D VFX — fighting game concept", "ru": "2D VFX — концепт для файтинга" },
+  "subtitle": {
+    "en": "Personal project: 8 game effects for a fighting game — weapon slash, block hit-spark, magic orb loop, UI button shine, reward burst, level up, ground impact and lightning strike. Made in After Effects with shape layers, particles and expressions, 30 fps. Each effect is exported as a loop and as a 4×4 sprite sheet ready for the engine.",
+    "ru": "Личный проект: 8 игровых эффектов для файтинга — удар оружием, искры блока, магическая сфера (луп), блик на UI-кнопке, взрыв награды, левел-ап, удар о землю и молния. Сделано в After Effects на шейп-слоях, частицах и экспрешенах, 30 fps. Каждый эффект выгружен лупом и спрайт-листом 4×4, готовым для движка."
+  },
+  "cover": "_cover.jpg",
+  "layout": "grid",
+  "groups": { "GIF": "Loops", "SHEET": "Sprite sheets 4×4" }
+}
