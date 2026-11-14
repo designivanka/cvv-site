@@ -1,0 +1,23 @@
+{
+  "title": {
+    "en": "Static banners for mobile games",
+    "ru": "Статичные баннеры для мобильных игр"
+  },
+  "subtitle": {
+    "en": "30 interstitial ad banners 320×480 for five casual titles — Business Empire, Dominoes, Klondike Solitaire, Number Clash and Word Maker. Each banner tests its own hook: emotion, challenge (\"only 1% can…\"), relaxation, progress or a dream. AI-generated key art, game UI, bold headlines and a clear CTA.",
+    "ru": "30 интерстишл-баннеров 320×480 для пяти казуальных игр — Business Empire, Dominoes, Klondike Solitaire, Number Clash и Word Maker. Каждый баннер проверяет свой хук: эмоция, челлендж («только 1% сможет…»), релакс, прогресс или мечта. AI-кей-арт, игровой UI, крупные заголовки и понятный CTA."
+  },
+  "badge": {
+    "en": "Commercial · mobile game ads · 2026",
+    "ru": "Коммерческий · реклама мобильных игр · 2026"
+  },
+  "cover": "_cover.jpg",
+  "layout": "grid",
+  "groups": {
+    "BE": "Business Empire",
+    "DM": "Dominoes",
+    "KL": "Klondike Solitaire",
+    "NC": "Number Clash",
+    "WM": "Word Maker"
+  }
+}
