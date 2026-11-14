@@ -1,0 +1,9 @@
+{
+  "title": { "en": "CRYSTAL — AI fashion film", "ru": "CRYSTAL — AI fashion-фильм" },
+  "subtitle": {
+    "en": "\"She shines in the dark\": a 30-second vertical fashion film made with AI video. One consistent character across 12 shots: crystal headpiece, pearls, pink satin gloves, low-key studio light and a spotlight finale. Generation, edit, titles and sound design in After Effects and Premiere, plus an animated Behance cover.",
+    "ru": "«She shines in the dark»: вертикальный fashion-фильм на 30 секунд, сделанный AI-видео. Один узнаваемый персонаж в 12 кадрах: кристальный головной убор, жемчуг, розовые атласные перчатки, низкий ключ и финал в луче прожектора. Генерация, монтаж, титры и саунд-дизайн в After Effects и Premiere, плюс анимированная обложка для Behance."
+  },
+  "cover": "cover.jpg",
+  "order": ["01 CRYSTAL trailer", "02 CRYSTAL cover"]
+}
