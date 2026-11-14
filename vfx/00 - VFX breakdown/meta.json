@@ -1,0 +1,8 @@
+{
+  "title": { "en": "VFX breakdown — how the effects are built", "ru": "VFX breakdown — как устроены эффекты" },
+  "subtitle": {
+    "en": "Technical breakdown of four effects: Lightning Strike, Block Hit-Spark, Gem Pop and an Energy Aura shader. For each — layers and how they combine, timing frame by frame at 30 fps, the 4×4 sprite sheet, After Effects techniques and the Unity particle-system prefab setup. The aura is a custom HLSL shader: two scrolling noise layers distort a soft mask, with parameters exposed in the material.",
+    "ru": "Технический разбор четырёх эффектов: Lightning Strike, Block Hit-Spark, Gem Pop и шейдер Energy Aura. Для каждого — слои и как они складываются, тайминг по кадрам на 30 fps, спрайт-лист 4×4, приёмы в After Effects и настройка префаба particle system в Unity. Аура — кастомный HLSL-шейдер: два скроллящихся слоя шума искажают мягкую маску, параметры вынесены в материал."
+  },
+  "wide": true
+}
