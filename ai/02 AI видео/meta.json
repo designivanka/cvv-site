@@ -4,15 +4,16 @@
     "ru": "AI видео"
   },
   "subtitle": {
-    "en": "Generated video: a car-show promo with drift and smoke, aerial and event shots (Seedance, Magnific), and a product-style scene. Camera moves, physics and atmosphere built with AI video models.",
-    "ru": "Генеративное видео: промо автошоу с дрифтом и дымом, съёмка с дрона и ивент-сцены (Seedance, Magnific), предметная сцена. Движение камеры, физика и атмосфера — средствами AI-видеомоделей."
+    "en": "Generated video: a product-style scene with red heels on grass, a 3D-cartoon story \"Husband vs. Spider\", a car-show promo with drift and smoke, aerial and event shots (Seedance, Magnific). Camera moves, physics and atmosphere built with AI video models.",
+    "ru": "Генеративное видео: предметная сцена с красными туфлями на траве, 3D-мультик «Husband vs. Spider», промо автошоу с дрифтом и дымом, съёмка с дрона и ивент-сцены (Seedance, Magnific). Движение камеры, физика и атмосфера — средствами AI-видеомоделей."
   },
-  "cover": "Cars-Seedance-01.jpg",
+  "cover": "Magnific-01.jpg",
   "order": [
+    "Magnific-01",
+    "Pavuk",
     "Cars-Show",
     "Cars-Seedance-01",
     "Cars-Seedance-02",
-    "Cars-Magnific-01",
-    "Magnific-01"
+    "Cars-Magnific-01"
   ]
 }

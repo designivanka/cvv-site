@@ -4,8 +4,8 @@
     "ru": "AI персонажи"
   },
   "subtitle": {
-    "en": "UGC-style ad creatives with AI-generated characters: talking heads, reactions, talk-show and street formats, plus a 3D-cartoon story. Consistent faces, lip-sync and voice, edited for mobile game performance marketing.",
-    "ru": "Рекламные креативы в UGC-формате с AI-персонажами: говорящие головы, реакции, ток-шоу и уличные форматы, а также 3D-мультяшная история. Узнаваемые лица, липсинк и озвучка, монтаж под перформанс-маркетинг мобильных игр."
+    "en": "UGC-style ad creatives with AI-generated characters: talking heads, reactions, talk-show and street formats. Consistent faces, lip-sync and voice, edited for mobile game performance marketing.",
+    "ru": "Рекламные креативы в UGC-формате с AI-персонажами: говорящие головы, реакции, ток-шоу и уличные форматы. Узнаваемые лица, липсинк и озвучка, монтаж под перформанс-маркетинг мобильных игр."
   },
   "cover": "AI-Reel-02.jpg",
   "order": [
@@ -15,7 +15,6 @@
     "AI-Reel-07",
     "AI-Reel-01",
     "AI-Reel-06",
-    "AI-Reel-03",
-    "Pavuk"
+    "AI-Reel-03"
   ]
 }
