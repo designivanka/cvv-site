@@ -168,10 +168,11 @@
       fact1: 'Single HTML file < 5 MB', fact2: 'Portrait + landscape', fact3: 'No external requests',
       all: 'All', play: 'Play', full: 'Full screen ↗', esc: 'Esc or ← back to close', footer: 'Full portfolio →' }
   };
-  var GAMES = { AM: 'Arrow Master', DM: 'Dominoes' };
+  var GAMES = { AM: 'Arrow Master', DM: 'Dominoes', BWA: 'Bubble Word' };
   var NAMES = { woman: 'Woman', colors: 'Colors', cubegold: 'Cube Gold', halloween: 'Halloween',
-    choose: 'Choose', rasta: 'Rasta' };
+    choose: 'Choose', rasta: 'Rasta', gameplay: 'Gameplay' };
   var BY_NUM = { '109': 'Halloween · Pumpkin', '110': 'Halloween · Witch Cat' };
+  var BY_FILE = { 'BWA_playable_019_gameplay_applovin.html': 'Gameplay #1', 'BWA_playable_022_gameplay_applovin.html': 'Gameplay #2', 'BWA_playable_026_gameplay_applovin.html': 'Gameplay #3', 'BWA_playable_039_halloween_applovin.html': 'Halloween #1', 'BWA_playable_040_halloween_applovin.html': 'Halloween #2' };
 
   var params = new URLSearchParams(location.search);
   var lang = params.get('lang');
@@ -189,7 +190,8 @@
     var key = m ? m[3].toLowerCase() : file;
     var name = NAMES[key] || (key.charAt(0).toUpperCase() + key.slice(1));
     var num = m ? String(parseInt(m[2], 10)) : '';
-    if (BY_NUM[num]) name = BY_NUM[num];
+    if (code === 'AM' && BY_NUM[num]) name = BY_NUM[num];
+    if (BY_FILE[file]) name = BY_FILE[file];
     return { file: file, game: GAMES[code] || code || 'Playable', name: name, num: num };
   }
 
