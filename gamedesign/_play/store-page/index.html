@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Snuggle Spots — store listing concept</title>
+
+<style>@font-face{font-family:'Lilita One';src:url(fonts/lilita.woff2)}@font-face{font-family:Fredoka;font-weight:500;src:url(fonts/fredoka500.woff2)}@font-face{font-family:Fredoka;font-weight:600;src:url(fonts/fredoka600.woff2)}@font-face{font-family:Fredoka;font-weight:700;src:url(fonts/fredoka700.woff2)}
+:root{--cocoa:#4a2e2a;--cream:#fff6ea;--peach:#ffb27a;--muted:#8a6d64}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Fredoka,system-ui,sans-serif;background:#f4ece4;color:var(--cocoa)}
+.note{background:var(--cocoa);color:#fff;font-size:13px;font-weight:600;text-align:center;padding:8px 12px;letter-spacing:.3px}
+.wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px}
+.head{display:flex;gap:28px;align-items:center}
+.icon{width:148px;height:148px;border-radius:34px;box-shadow:0 10px 26px rgba(74,46,42,.25);flex:none}
+.head h1{font-family:'Lilita One';font-weight:400;font-size:44px;line-height:1}
+.head .sub{font-size:19px;font-weight:600;color:var(--muted);margin-top:6px}
+.head .dev{font-size:15px;font-weight:600;color:#e0784a;margin-top:6px}
+.get{display:inline-flex;align-items:center;justify-content:center;margin-top:16px;background:linear-gradient(#8ff0a1,#3cb85a);color:#fff;font-family:'Lilita One';font-size:22px;padding:10px 34px;border-radius:999px;box-shadow:0 4px 0 #2f8a45;border:0}
+.meta{display:flex;gap:0;margin:28px 0;border-top:1px solid #e5d6c8;border-bottom:1px solid #e5d6c8}
+.meta div{flex:1;text-align:center;padding:14px 6px;border-right:1px solid #e5d6c8}
+.meta div:last-child{border:0}
+.meta b{display:block;font-size:20px}.meta span{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.shots{display:flex;gap:16px;overflow-x:auto;padding:4px 2px 18px;scroll-snap-type:x mandatory}
+.shots img{height:520px;border-radius:24px;box-shadow:0 8px 20px rgba(74,46,42,.18);scroll-snap-align:start;flex:none}
+h2{font-family:'Lilita One';font-weight:400;font-size:26px;margin:34px 0 12px}
+p,li{font-size:17px;line-height:1.55;font-weight:500}
+ul{padding-left:22px}
+.feature{width:100%;border-radius:22px;box-shadow:0 8px 20px rgba(74,46,42,.18)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 2px 0 #e5d6c8}
+.card b{display:block;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.kw{display:flex;flex-wrap:wrap;gap:8px}.kw span{background:#fff;border:1px solid #e5d6c8;border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600}
+</style></head><body>
+<div class="note">Store listing concept · Snuggle Spots portfolio prototype · not a live app</div>
+<div class="wrap">
+ <div class="head"><img class="icon" src="img/icon.jpg" alt="App icon"><div>
+  <h1>Snuggle Spots</h1><div class="sub">Cozy Cat Logic Puzzle</div><div class="dev">Portfolio prototype</div>
+  <button class="get">GET</button></div></div>
+ <div class="meta"><div><b>Puzzle</b><span>Category</span></div><div><b>4+</b><span>Age</span></div><div><b>12</b><span>Levels</span></div><div><b>5</b><span>Worlds</span></div><div><b>EN</b><span>Language</span></div></div>
+ <div class="shots"><img src="img/s1.jpg"><img src="img/s2.jpg"><img src="img/s3.jpg"><img src="img/s4.jpg"><img src="img/s5.jpg"><img src="img/s6.jpg"></div>
+ <h2>About this game</h2>
+ <p>Help sleepy cats find their perfect nap spot! Seat exactly one cat on every coloured cushion, one in each row and column — and remember, cats never sit next to each other, not even diagonally. Every puzzle has exactly one solution you can reach by pure logic, no guessing needed.</p>
+ <ul style="margin-top:12px">
+  <li>Learn in 30 seconds with a friendly interactive tutorial</li>
+  <li>12 handcrafted levels from 5×5 to 7×7 with fresh twists: toy blockers, timed naps, bonus treats and a one-heart challenge</li>
+  <li>5 cozy worlds: living room, zen garden, beach café, winter cabin and a spooky Halloween night</li>
+  <li>Boosters: Catnip hint, Peek, Undo and Fish Shield</li>
+  <li>Out of hints? Play Treat Catch to earn free Catnip</li>
+  <li>Juicy animations, purrs and confetti on every move</li>
+ </ul>
+ <h2>Feature graphic</h2><img class="feature" src="img/feature.jpg" alt="Feature graphic">
+ <h2>What's new</h2><p>Version 0.1 · Halloween event with ghost cats, new Treat Catch mini-game, smoother cat landings.</p>
+ <h2>Listing metadata</h2>
+ <div class="grid">
+  <div class="card"><b>App name (30)</b>Snuggle Spots: Cat Puzzle</div>
+  <div class="card"><b>Subtitle (30)</b>Cozy Cat Logic Puzzle</div>
+  <div class="card"><b>Short description (80)</b>Seat every sleepy cat on its cushion — a cozy logic puzzle with no guessing!</div>
+  <div class="card"><b>Promo text (170)</b>New: Pumpkin Night! Ghost cats need cozy spots too. Solve spooky puzzles and earn free hints in Treat Catch.</div>
+ </div>
+ <h2>Keywords</h2>
+ <div class="kw"><span>cat puzzle</span><span>logic</span><span>queens</span><span>star battle</span><span>brain teaser</span><span>cozy</span><span>kitten</span><span>sudoku</span><span>relaxing</span><span>nonogram</span></div>
+</div></body></html>

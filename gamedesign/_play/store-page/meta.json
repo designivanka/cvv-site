@@ -1,0 +1,10 @@
+{
+  "title": { "en": "Snuggle Spots — store page concept", "ru": "Snuggle Spots — концепт страницы в сторе" },
+  "subtitle": {
+    "en": "Interactive store listing mock-up: icon, title, ratings, scrollable screenshots, feature graphic, description and feature cards — how the game would look on Google Play / App Store.",
+    "ru": "Интерактивный макет страницы в сторе: иконка, название, рейтинги, листаемые скриншоты, фича-графика, описание и карточки фич — как игра выглядела бы в Google Play / App Store."
+  },
+  "badge": { "en": "Game design · Store page", "ru": "Гейм-дизайн · Страница в сторе" },
+  "cardLabel": "▶ Store page",
+  "portrait": false
+}
