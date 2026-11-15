@@ -1,0 +1,11 @@
+{
+  "title": { "en": "Snuggle Spots — cat logic puzzle", "ru": "Snuggle Spots — логическая пазл-игра с котиками" },
+  "subtitle": {
+    "en": "Full 2D game art case for a cozy puzzle: place exactly one cat in every cushion region, no shared rows, columns or neighbours. Art style guide (palette as Figma variables, light rig, outlines, proportions), 54 production icons in 6 categories with an AI-assisted pipeline, 6 game screens from a UI kit, game-juice storyboards with VFX sprites, 5 setting variations + Halloween seasonal skin, app icon A/B, store screenshots, ad creatives and a Unity handoff: sprite atlases, import settings, 9-slice borders, Shuriken particles, naming.",
+    "ru": "Полный кейс по 2D гейм-арту для уютного пазла: в каждую подушку-регион нужно посадить ровно одного кота, без общих рядов, столбцов и соседей. Арт-стайлгайд (палитра в Figma-переменных, световая схема, обводки, пропорции), 54 продакшн-иконки в 6 категориях с AI-пайплайном, 6 игровых экранов из UI-кита, сториборды game juice со спрайтами VFX, 5 вариантов сеттинга + сезонный Halloween-скин, A/B иконки приложения, скриншоты для стора, рекламные креативы и хэндофф в Unity: атласы, импорт, 9-slice, частицы Shuriken, нейминг."
+  },
+  "badge": { "en": "Game design · 2D game art · 17 boards", "ru": "Гейм-дизайн · 2D гейм-арт · 17 листов" },
+  "cover": "01_cover.jpg",
+  "wide": true,
+  "link": "https://www.figma.com/design/GDcBSm7GFzrwahNGD0g1MV/Snuggle-Spots-%E2%80%94-Cat-Logic-Puzzle-%7C-Art-Portfolio?node-id=3-221"
+}
