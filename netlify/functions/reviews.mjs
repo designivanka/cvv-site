@@ -1029,7 +1029,7 @@ var src_default = async (req, context) => {
     if (!item) return json({ error: "not found" }, 404);
     const owner = body.token && sha(body.token) === item.tokenHash;
     if (!owner && !isAdmin) return json({ error: "forbidden" }, 403);
-    if (item.type === "note" && item.signed && !isAdmin) return json({ error: "locked" }, 423);
+    if (item.type === "note" && item.signed && body.op === "edit" && !isAdmin) return json({ error: "locked" }, 423);
     if (body.op === "delete") {
       await store.delete(key);
       await store.set(`del/${ts13(now)}-${id}`, "1");

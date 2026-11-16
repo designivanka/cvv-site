@@ -155,10 +155,9 @@
 <body>
 <header>
   <div class="wrap bar">
-    <a class="logo" href="./">Ivanova Yanina<small>Motion Designer</small></a>
+    <span class="logo">Ivanova Yanina<small>Motion Designer</small></span>
     <div class="actions">
       <span class="live is-off" id="live"><i></i><b>Live</b></span>
-      <a class="pill" href="./" data-i18n="back">← На сайт</a>
       <span class="lang"><button class="pill" data-lang="en">EN</button> <button class="pill" data-lang="ru">RU</button></span>
     </div>
   </div>
@@ -210,10 +209,10 @@
     ru: { back:'← На сайт', eyebrow:'Отзывы', title:'Доска <span>отзывов</span>',
       lead:'Работали со мной? Отклейте стикер из стопки внизу, приклейте на доску и напишите отзыв. Или возьмите маркер, мел, баллончик — и рисуйте прямо на доске. Всё появляется у всех сразу, в реальном времени ✨',
       empty:'Здесь пока пусто —<br>будьте первым ✨', more:'↓ Доска бесконечная — листайте вниз, места хватит всем',
-      footer:'Заполните отзыв, имя, должность и компанию и нажмите «📌 Приколоть» — стикер появится у всех. Приколотый стикер изменить или удалить уже нельзя.',
+      footer:'Заполните отзыв, имя, должность и компанию и нажмите «📌 Приколоть» — стикер появится у всех. Свой стикер можно изменить или удалить с того же устройства — чужие нельзя.',
       peel:'отклей меня', undo:'↶ Отменить штрих', hand:'✋ Положить',
       textPh:'Ваш отзыв: как работалось, что получилось…', namePh:'Имя Фамилия *', rolePh:'Должность *', companyPh:'Компания *',
-      capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? После этого его нельзя будет изменить или удалить.', del:'Удалить', typing:'кто-то пишет',
+      capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? Изменить или удалить его сможете только вы — с этого же устройства.', editBtn:'✏️ Изменить', saveBtn:'💾 Сохранить', editing:'редактирование', savedNote:'Сохранено ✓', confirmDelMine:'Удалить ваш стикер с доски?', del:'Удалить', typing:'кто-то пишет',
       needSign:'Допишите отзыв, имя, должность и компанию — и стикер появится у всех', posted:'Готово! Стикер на доске 💛',
       dropHint:'Перетащите стикер на доску', errNet:'Нет связи, повторим…', errRate:'Слишком много за час — попробуйте позже',
       adminbar:'Админ: фото-полароид можно перетаскивать и подписывать — всё сохраняется само. Клик по рисунку на доске — удалить штрих.', confirmDel:'Удалить?',
@@ -221,10 +220,10 @@
     en: { back:'← Back to site', eyebrow:'Reviews', title:'Reviews <span>board</span>',
       lead:'Worked with me? Peel a sticky note off the pad below, stick it on the board and write your review. Or grab a marker, chalk or spray can and draw right on the board. Everyone sees it instantly, in real time ✨',
       empty:'Nothing here yet —<br>be the first ✨', more:'↓ The board is endless — scroll down, there is room for everyone',
-      footer:'Fill in the review, name, position and company and press “📌 Pin it” — everyone will see it. A pinned note can no longer be edited or removed.',
+      footer:'Fill in the review, name, position and company and press “📌 Pin it” — everyone will see it. You can edit or delete your own note from the same device — not anyone else’s.',
       peel:'peel me off', undo:'↶ Undo stroke', hand:'✋ Put down',
       textPh:'Your review: what it was like, what we achieved…', namePh:'First Last *', rolePh:'Position *', companyPh:'Company *',
-      capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? After that it can no longer be edited or deleted.', del:'Delete', typing:'someone is writing',
+      capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? Only you can edit or delete it later — from this same device.', editBtn:'✏️ Edit', saveBtn:'💾 Save', editing:'editing', savedNote:'Saved ✓', confirmDelMine:'Delete your note from the board?', del:'Delete', typing:'someone is writing',
       needSign:'Add the review, your name, position and company — then everyone will see it', posted:'Done! Your note is on the board 💛',
       dropHint:'Drag the note onto the board', errNet:'Connection lost, retrying…', errRate:'Too many in an hour — try again later',
       adminbar:'Admin: click a drawing on the board to delete that stroke.', confirmDel:'Delete?',
@@ -469,12 +468,13 @@
   // ---------- notes ----------
   var noteEls = {}, editing = null, saveTimer = null;
   function removeNoteEl(id) { if (noteEls[id]) { noteEls[id].remove(); delete noteEls[id]; } }
-  function isDraft(id) { var it = items[id]; return !!mine[id] && !!it && !it.signed && !mine[id].locked; }
+  function isDraft(id) { var it = items[id]; return !!mine[id] && !!it && !it.signed; }
+  function isMine(id) { return !!mine[id] && !!items[id]; }
   function signedLocal(it) { return (it.text || '').trim().length >= 3 && (it.name || '').trim().length >= 2 && (it.company || '').trim() && (it.role || '').trim(); }
   function renderNote(it, isNew) {
     var n = noteEls[it.id];
     if (!n) { n = el('div', 'note'); noteEls[it.id] = n; notesEl.appendChild(n); bindNote(n, it.id); }
-    var own = isDraft(it.id), ed = editing === it.id;
+    var own = isDraft(it.id), mineNote = isMine(it.id), ed = editing === it.id;
     n.className = 'note' + (own ? ' is-mine' : (it.typing ? '' : ' is-readable')) + (ed ? ' is-editing' : '') + (isNew ? ' is-new' : '') + ((it.text || '').length > 200 ? ' note--long' : '');
     n.style.left = it.x + 'px'; n.style.top = it.y + 'px'; n.style.setProperty('--rot', (it.rot || 0) + 'deg');
     n.style.setProperty('--es', Math.max(1.04, Math.min(2.2, 300 / (NOTE_W * S))).toFixed(3));
@@ -506,18 +506,27 @@
         var sm = el('small'); sm.textContent = [it.role, it.company].filter(Boolean).join(', '); sg.appendChild(sm); body.appendChild(sg);
       }
       if (own) { var b2 = el('div', 'note__bar'); var sp = el('span'); sp.textContent = T().draft; b2.appendChild(sp); n.appendChild(b2); }
+      else if (mineNote) {
+        var b3 = el('div', 'note__bar');
+        var eb = el('button'); eb.type = 'button'; eb.textContent = T().editBtn; eb.onclick = function (e) { e.stopPropagation(); startEdit(it.id); }; b3.appendChild(eb);
+        var db = el('button', 'del'); db.type = 'button'; db.textContent = '✕'; db.title = T().del; db.onclick = function (e) { e.stopPropagation(); deleteMyNote(it.id); }; b3.appendChild(db);
+        b3.querySelectorAll('button').forEach(function (b) { b.addEventListener('pointerdown', function (e) { e.stopPropagation(); }); b.addEventListener('click', function (e) { e.stopPropagation(); }); });
+        n.appendChild(b3);
+      }
     }
     if (ed) setTimeout(function () { var t = n.querySelector('textarea'); if (t && document.activeElement.tagName !== 'INPUT') t.focus(); }, 30);
     return n;
   }
   function syncBar(n, it) {
     var bar = n.querySelector('.note__bar'); if (!bar) return; bar.innerHTML = '';
-    var st = el('span'); st.textContent = T().draft; bar.appendChild(st);
-    var done = el('button'); done.type = 'button'; done.textContent = T().done; done.onclick = function (e) { e.stopPropagation(); finishEdit(true); }; bar.appendChild(done);
+    var pub = !!it.signed;
+    var st = el('span', pub ? 'ok' : ''); st.textContent = pub ? T().editing : T().draft; bar.appendChild(st);
+    var done = el('button'); done.type = 'button'; done.textContent = pub ? T().saveBtn : T().done; done.onclick = function (e) { e.stopPropagation(); finishEdit(true); }; bar.appendChild(done);
     var del = el('button', 'del'); del.type = 'button'; del.textContent = '✕'; del.title = T().del; del.onclick = function (e) { e.stopPropagation(); deleteMyNote(it.id); }; bar.appendChild(del);
     bar.querySelectorAll('button').forEach(function (b) { b.addEventListener('pointerdown', function (e) { e.stopPropagation(); }); });
   }
-  function startEdit(id) { if (editing === id) return; if (editing) finishEdit(); setTool(null); editing = id; renderNote(items[id]); }
+  var snapshot = null;
+  function startEdit(id) { if (editing === id) return; if (editing) finishEdit(); setTool(null); var it = items[id]; snapshot = { text:it.text, name:it.name, company:it.company, role:it.role }; editing = id; renderNote(it); }
   function finishEdit(explicit) {
     var id = editing; if (!id) return; editing = null; var it = items[id]; if (!it) return;
     flushSave(id);
@@ -526,7 +535,8 @@
       ['textarea', 'input.n', '.row input'].forEach(function (q) { n.querySelectorAll(q).forEach(function (f) { if (f.value.trim().length < (f.tagName === 'TEXTAREA' ? 3 : f.classList.contains('n') ? 2 : 1)) f.classList.add('bad'); }); });
       return;
     }
-    if (explicit) { if (!confirm(T().confirmPub)) { editing = id; return; } publish(id, 0); return; }
+    if (explicit) { if (!it.signed && !confirm(T().confirmPub)) { editing = id; return; } publish(id, 0); return; }
+    if (it.signed && snapshot) { it.text = snapshot.text; it.name = snapshot.name; it.company = snapshot.company; it.role = snapshot.role; } // unsaved changes to a pinned note are dropped
     renderNote(it);
   }
   function publish(id, tries) {
@@ -534,7 +544,7 @@
     if (!m.token) { if (tries < 10) setTimeout(function () { publish(id, tries + 1); }, 700); else toast(T().errNet); return; }
     var n = noteEls[id], hp = n && n.querySelector('.hp');
     post({ op:'publish', id:id, token:m.token, text:it.text, name:it.name, company:it.company, role:it.role, x:Math.round(it.x), y:Math.round(it.y), website:hp ? hp.value : '' })
-      .then(function () { it.signed = true; m.locked = true; delete m.d; saveMine(); renderNote(it); toast(T().posted); })
+      .then(function () { var was = it.signed; it.signed = true; delete m.d; saveMine(); renderNote(it); toast(was ? T().savedNote : T().posted); })
       .catch(function (e) { toast(e.code === 429 ? T().errRate : e.code === 400 ? T().needSign : T().errNet); renderNote(it); });
   }
   document.addEventListener('pointerdown', function (e) { if (editing && !e.target.closest('.note.is-editing')) finishEdit(); });
@@ -548,7 +558,8 @@
       .catch(function (e) { if (e.code === 429) toast(T().errRate); else if (e.code === 404) { delete mine[id]; saveMine(); } });
   }
   function deleteMyNote(id) {
-    if (!isDraft(id) && !String(id).startsWith('tmp-')) return;
+    if (!isMine(id) && !String(id).startsWith('tmp-')) return;
+    if (items[id] && items[id].signed && !confirm(T().confirmDelMine)) return;
     var m = mine[id]; if (editing === id) editing = null;
     delete items[id]; removeNoteEl(id); syncEmpty();
     if (m && m.token) post({ op:'delete', id:id, token:m.token }).catch(function () {});
@@ -645,7 +656,7 @@
     if (ph) { if (e.target.closest('textarea') || ph.dataset.moved === '1') return; var pid = Object.keys(noteEls).find(function (k) { return noteEls[k] === ph; }); if (pid && items[pid]) zoomPhoto(items[pid]); return; }
     var n = e.target.closest('.note'); if (!n) return;
     var id = Object.keys(noteEls).find(function (k) { return noteEls[k] === n; });
-    var it = id && items[id]; if (!it || isDraft(id) || it.typing) return;
+    var it = id && items[id]; if (!it || isDraft(id) || it.typing || editing === id) return;
     hearts(e.clientX, e.clientY); setTimeout(function () { zoomNote(id); }, 260);
   });
 
