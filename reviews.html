@@ -339,7 +339,7 @@
           for (var k = 0; k < 7; k++) { ctx.globalAlpha = .25 + R() * .55; var s = 1 + R() * 2.4; ctx.fillRect(x + (R() - .5) * 13, y + (R() - .5) * 13, s, s); } }
         break;
       case 'brush':
-        ctx.globalAlpha = .95; ctx.strokeStyle = '#c8101d'; ctx.lineWidth = 13; ctx.lineCap = ctx.lineJoin = 'round';
+        ctx.globalAlpha = .95; ctx.shadowColor = '#ff7a1a'; ctx.shadowBlur = 10; ctx.strokeStyle = '#ff6a00'; ctx.lineWidth = 13; ctx.lineCap = ctx.lineJoin = 'round';
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
         if (R() < .06 + Math.min(dist, 30) / 300) {
           var d = { x:b.x + (R() - .5) * 8, y:b.y + 4, len:0, max:25 + R() * 90, w:3 + R() * 4 };
@@ -370,7 +370,7 @@
     ctx.restore();
   }
   function drawDrip(d, from) {
-    ctx.save(); ctx.strokeStyle = '#c8101d'; ctx.fillStyle = '#c8101d'; ctx.lineCap = 'round'; ctx.globalAlpha = .95;
+    ctx.save(); ctx.strokeStyle = '#ff6a00'; ctx.fillStyle = '#ff6a00'; ctx.lineCap = 'round'; ctx.globalAlpha = .95;
     ctx.lineWidth = d.w * (1 - d.len / d.max * .35); ctx.beginPath(); ctx.moveTo(d.x, d.y + from); ctx.lineTo(d.x, d.y + d.len); ctx.stroke();
     if (d.len >= d.max) { ctx.beginPath(); ctx.arc(d.x, d.y + d.len, d.w * .75, 0, 6.283); ctx.fill(); }
     ctx.restore();
