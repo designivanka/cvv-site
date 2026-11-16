@@ -87,6 +87,15 @@
   .note__bar span.ok { color:#86efac; }
   .note__bar button { border:0; cursor:pointer; font-weight:700; font-size:13px; padding:6px 11px; border-radius:999px; background:#fde68a; color:#3b2a00; box-shadow:0 4px 10px rgba(0,0,0,.4); }
   .note__bar button.del { background:#dc2626; color:#fff; }
+  .polaroid { position:absolute; width:420px; padding:16px 16px 0; background:#fbfaf6; transform:translate(-50%,-50%) rotate(var(--rot,0deg)); box-shadow:0 18px 30px rgba(0,0,0,.45), 0 2px 4px rgba(0,0,0,.3); z-index:3; pointer-events:auto; transition:transform .25s; touch-action:none; }
+  .polaroid:hover { transform:translate(-50%,-50%) rotate(0deg) scale(1.03); z-index:7; }
+  .polaroid img.ph { display:block; width:100%; aspect-ratio:3/2; object-fit:cover; background:#ddd; pointer-events:none; }
+  .polaroid .tape { position:absolute; left:50%; top:-16px; width:120px; height:34px; transform:translateX(-50%) rotate(-3deg); background:rgba(253,230,138,.75); box-shadow:0 2px 4px rgba(0,0,0,.15); pointer-events:none; }
+  .polaroid .cap { min-height:78px; padding:10px 4px 12px; font-family:'Caveat',cursive; font-size:30px; line-height:1.05; color:#2b2214; text-align:center; white-space:pre-wrap; word-break:break-word; }
+  .polaroid textarea.cap { width:100%; border:0; outline:1px dashed rgba(43,34,20,.25); background:transparent; resize:none; display:block; }
+  body.is-admin .polaroid { cursor:grab; }
+  .polaroid.is-dragging { cursor:grabbing; transition:none; z-index:9; }
+  body.is-drawing .polaroid { pointer-events:none; }
   .note__x { position:absolute; top:-12px; right:-12px; width:30px; height:30px; border-radius:50%; border:0; cursor:pointer; font-weight:800; color:#fff; background:#dc2626; box-shadow:0 4px 10px rgba(0,0,0,.4); z-index:3; }
 
   /* ---- dock: sticky pad + tools standing at the bottom ---- */
@@ -193,10 +202,10 @@
       footer:'Заполните отзыв, имя, должность и компанию и нажмите «📌 Приколоть» — стикер появится у всех. Приколотый стикер изменить или удалить уже нельзя.',
       peel:'отклей меня', undo:'↶ Отменить штрих', hand:'✋ Положить',
       textPh:'Ваш отзыв: как работалось, что получилось…', namePh:'Имя Фамилия *', rolePh:'Должность *', companyPh:'Компания *',
-      draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? После этого его нельзя будет изменить или удалить.', del:'Удалить', typing:'кто-то пишет',
+      capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? После этого его нельзя будет изменить или удалить.', del:'Удалить', typing:'кто-то пишет',
       needSign:'Допишите отзыв, имя, должность и компанию — и стикер появится у всех', posted:'Готово! Стикер на доске 💛',
       dropHint:'Перетащите стикер на доску', errNet:'Нет связи, повторим…', errRate:'Слишком много за час — попробуйте позже',
-      adminbar:'Админ: клик по рисунку на доске — удалить штрих.', confirmDel:'Удалить?',
+      adminbar:'Админ: фото-полароид можно перетаскивать и подписывать — всё сохраняется само. Клик по рисунку на доске — удалить штрих.', confirmDel:'Удалить?',
       tools:{ marker:'Маркер', chalk:'Мел', brush:'Краска', spray:'Баллончик', pencil:'Карандаш', glitter:'Глиттер', neon:'Неон', eraser:'Ластик' } },
     en: { back:'← Back to site', eyebrow:'Reviews', title:'Reviews <span>board</span>',
       lead:'Worked with me? Peel a sticky note off the pad below, stick it on the board and write your review. Or grab a marker, chalk or spray can and draw right on the board. Everyone sees it instantly, in real time ✨',
@@ -204,7 +213,7 @@
       footer:'Fill in the review, name, position and company and press “📌 Pin it” — everyone will see it. A pinned note can no longer be edited or removed.',
       peel:'peel me off', undo:'↶ Undo stroke', hand:'✋ Put down',
       textPh:'Your review: what it was like, what we achieved…', namePh:'First Last *', rolePh:'Position *', companyPh:'Company *',
-      draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? After that it can no longer be edited or deleted.', del:'Delete', typing:'someone is writing',
+      capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? After that it can no longer be edited or deleted.', del:'Delete', typing:'someone is writing',
       needSign:'Add the review, your name, position and company — then everyone will see it', posted:'Done! Your note is on the board 💛',
       dropHint:'Drag the note onto the board', errNet:'Connection lost, retrying…', errRate:'Too many in an hour — try again later',
       adminbar:'Admin: click a drawing on the board to delete that stroke.', confirmDel:'Delete?',
@@ -260,6 +269,7 @@
     var bottom = 0;
     Object.keys(items).forEach(function (id) { var it = items[id];
       if (it.type === 'note') bottom = Math.max(bottom, it.y + 160);
+      else if (it.type === 'photo') bottom = Math.max(bottom, it.y + 220);
       else for (var i = 1; i < it.pts.length; i += 2) if (it.pts[i] > bottom) bottom = it.pts[i]; });
     setH(Math.max(1200, bottom + 900));
   }
@@ -284,6 +294,7 @@
       (d.items || []).forEach(function (it) {
         var prev = items[it.id];
         if (it.type === 'stroke') { if (!prev) { items[it.id] = it; fresh.push(it); } return; }
+        if (it.type === 'photo') { if (photoBusy === it.id) return; items[it.id] = it; renderPhoto(it); return; }
         if (prev && editing === it.id) { prev.x = it.x; prev.y = it.y; return; } // don't clobber what I'm typing
         if (mine[it.id] && it.typing) { if (prev) return; var dd = mine[it.id].d || {}; it.typing = false; it.text = dd.text || ''; it.name = dd.name || ''; it.company = dd.company || ''; it.role = dd.role || ''; } // my own draft
         items[it.id] = it; renderNote(it);
@@ -546,6 +557,39 @@
         if (moved) { setH(it.y + 900); flushSave(id); } else startEdit(id); }
       n.addEventListener('pointermove', mv); n.addEventListener('pointerup', up); n.addEventListener('pointercancel', up);
     });
+  }
+
+  // ---------- polaroid photos (placed and captioned by the admin only) ----------
+  var photoBusy = null, photoTimer = null;
+  function savePhoto(it) { post({ op:'edit', id:it.id, caption:it.caption, x:Math.round(it.x), y:Math.round(it.y) }, true).catch(function () { toast(T().errNet); }); }
+  function renderPhoto(it) {
+    var n = noteEls[it.id];
+    if (!n) {
+      n = el('div', 'polaroid'); noteEls[it.id] = n; notesEl.appendChild(n);
+      n.appendChild(el('div', 'tape'));
+      var im = el('img', 'ph'); im.alt = ''; im.loading = 'lazy'; n.appendChild(im);
+      var cap;
+      if (adminKey) {
+        cap = el('textarea', 'cap'); cap.rows = 2; cap.maxLength = 160; cap.placeholder = T().capPh;
+        cap.addEventListener('focus', function () { photoBusy = it.id; });
+        cap.addEventListener('blur', function () { photoBusy = null; clearTimeout(photoTimer); savePhoto(items[it.id]); });
+        cap.addEventListener('input', function () { items[it.id].caption = cap.value; clearTimeout(photoTimer); photoTimer = setTimeout(function () { savePhoto(items[it.id]); }, 700); });
+        cap.addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+        n.addEventListener('pointerdown', function (ev) {
+          var p0 = items[it.id], start = stagePoint(ev), ox = p0.x, oy = p0.y, moved = false;
+          photoBusy = it.id; n.setPointerCapture(ev.pointerId);
+          function mv(e) { var p = stagePoint(e), dx = p.x - start.x, dy = p.y - start.y; if (!moved && Math.hypot(dx, dy) < 6) return; moved = true; n.classList.add('is-dragging');
+            p0.x = Math.min(W - 60, Math.max(60, ox + dx)); p0.y = Math.max(160, oy + dy); n.style.left = p0.x + 'px'; n.style.top = p0.y + 'px'; }
+          function up() { n.removeEventListener('pointermove', mv); n.removeEventListener('pointerup', up); n.removeEventListener('pointercancel', up); n.classList.remove('is-dragging'); photoBusy = null;
+            if (moved) { setH(p0.y + 900); savePhoto(p0); toast(T().saved); } }
+          n.addEventListener('pointermove', mv); n.addEventListener('pointerup', up); n.addEventListener('pointercancel', up);
+        });
+      } else cap = el('div', 'cap');
+      n.appendChild(cap);
+    }
+    n.querySelector('img.ph').src = it.src;
+    n.style.left = it.x + 'px'; n.style.top = it.y + 'px'; n.style.setProperty('--rot', (it.rot || 0) + 'deg');
+    var c = n.querySelector('.cap'); if (c.tagName === 'TEXTAREA') { if (document.activeElement !== c) c.value = it.caption || ''; } else c.textContent = it.caption || '';
   }
 
   // ---------- sticky pad: peel & stick ----------

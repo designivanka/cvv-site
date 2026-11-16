@@ -1001,6 +1001,26 @@ var src_default = async (req, context) => {
     await store.setJSON(keyOf(item), item);
     return json({ ok: true, id: item.id, token, updatedAt: now });
   }
+  if (body.op === "photo") {
+    if (!isAdmin) return json({ error: "forbidden" }, 403);
+    const src = clean(body.src, 120);
+    if (!/^\.\/reviews\/[\w.-]+\.(webp|jpg|png)$/.test(src)) return json({ error: "src" }, 400);
+    const item = {
+      id: randomUUID(),
+      type: "photo",
+      src,
+      x: num(body.x, 0, 1600, 800),
+      y: num(body.y, 0, 2e5, 400),
+      rot: num(body.rot, -10, 10, -2),
+      caption: clean(body.caption, 160),
+      signed: true,
+      createdAt: now,
+      updatedAt: now,
+      tokenHash: ""
+    };
+    await store.setJSON(keyOf(item), item);
+    return json({ ok: true, id: item.id, updatedAt: now });
+  }
   if (body.op === "edit" || body.op === "delete" || body.op === "publish") {
     const id = clean(body.id, 64);
     const key = await findKey(store, id);
@@ -1014,6 +1034,17 @@ var src_default = async (req, context) => {
       await store.delete(key);
       await store.set(`del/${ts13(now)}-${id}`, "1");
       return json({ ok: true });
+    }
+    if (item.type === "photo") {
+      if (!isAdmin) return json({ error: "forbidden" }, 403);
+      if (body.caption != null) item.caption = clean(body.caption, 160);
+      if (body.x != null) item.x = num(body.x, 0, 1600, item.x);
+      if (body.y != null) item.y = num(body.y, 0, 2e5, item.y);
+      if (body.rot != null) item.rot = num(body.rot, -10, 10, item.rot);
+      item.updatedAt = now;
+      await store.delete(key);
+      await store.setJSON(keyOf(item), item);
+      return json({ ok: true, updatedAt: now });
     }
     if (item.type !== "note") return json({ error: "type" }, 400);
     if (!await rate(store, ip, "edit")) return json({ error: "rate" }, 429);
