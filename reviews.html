@@ -54,7 +54,8 @@
 
   /* ---- notes ---- */
   .note { position:absolute; width:272px; height:280px; transform:translate(-50%,-50%) rotate(var(--rot,0deg)); filter:drop-shadow(0 10px 12px rgba(0,0,0,.35)); transition:transform .25s; z-index:2; pointer-events:auto; touch-action:none; }
-  .note:hover, .note.is-editing { transform:translate(-50%,-50%) rotate(0deg) scale(1.04); z-index:6; }
+  .note:hover { transform:translate(-50%,-50%) rotate(0deg) scale(1.04); z-index:6; }
+  .note.is-editing { transform:translate(-50%,-50%) rotate(0deg) scale(var(--es,1.04)); z-index:8; }
   .note.is-new { animation:stick .45s cubic-bezier(.2,1.6,.4,1); }
   @keyframes stick { 0% { transform:translate(-50%,-50%) rotate(-14deg) scale(1.25); } 100% { transform:translate(-50%,-50%) rotate(0) scale(1.04); } }
   .note.is-mine { cursor:grab; }
@@ -449,6 +450,7 @@
     var own = !!mine[it.id], ed = editing === it.id;
     n.className = 'note' + (own ? ' is-mine' : '') + (ed ? ' is-editing' : '') + (isNew ? ' is-new' : '') + ((it.text || '').length > 200 ? ' note--long' : '');
     n.style.left = it.x + 'px'; n.style.top = it.y + 'px'; n.style.setProperty('--rot', (it.rot || 0) + 'deg');
+    n.style.setProperty('--es', Math.max(1.04, Math.min(2.2, 300 / (NOTE_W * S))).toFixed(3));
     if (ed && n.querySelector('textarea')) return n; // keep focus while typing
     n.innerHTML = '';
     var paper = el('div', 'note__paper c-' + (it.color || 'yellow')); n.appendChild(paper);
