@@ -1001,7 +1001,7 @@ var src_default = async (req, context) => {
     await store.setJSON(keyOf(item), item);
     return json({ ok: true, id: item.id, token, updatedAt: now });
   }
-  if (body.op === "edit" || body.op === "delete") {
+  if (body.op === "edit" || body.op === "delete" || body.op === "publish") {
     const id = clean(body.id, 64);
     const key = await findKey(store, id);
     if (!key) return json({ error: "not found" }, 404);
@@ -1009,6 +1009,7 @@ var src_default = async (req, context) => {
     if (!item) return json({ error: "not found" }, 404);
     const owner = body.token && sha(body.token) === item.tokenHash;
     if (!owner && !isAdmin) return json({ error: "forbidden" }, 403);
+    if (item.type === "note" && item.signed && !isAdmin) return json({ error: "locked" }, 423);
     if (body.op === "delete") {
       await store.delete(key);
       await store.set(`del/${ts13(now)}-${id}`, "1");
@@ -1022,7 +1023,12 @@ var src_default = async (req, context) => {
     item.role = clean(body.role, 60);
     if (body.x != null) item.x = num(body.x, 0, 1600, item.x);
     if (body.y != null) item.y = num(body.y, 0, 2e5, item.y);
-    item.signed = item.text.trim().length >= 3 && item.name.trim().length >= 2 && !!item.company.trim() && !!item.role.trim();
+    if (body.op === "publish") {
+      const ok = item.text.trim().length >= 3 && item.name.trim().length >= 2 && !!item.company.trim() && !!item.role.trim();
+      if (!ok) return json({ error: "fields" }, 400);
+      item.signed = true;
+      item.publishedAt = now;
+    }
     item.updatedAt = now;
     await store.delete(key);
     await store.setJSON(keyOf(item), item);
