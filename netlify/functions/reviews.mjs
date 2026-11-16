@@ -894,38 +894,59 @@ var getStore = (input, options) => {
 };
 
 // src.mjs
-import { createHash, randomUUID } from "node:crypto";
+import { createHash, randomUUID, randomBytes } from "node:crypto";
 var ADMIN_HASH = "a2ce9eee8f77e62bc8bf4289b95bbc0413fead1b3a4d563e4cdbf253d6405d6b";
-var MAX_DRAWING = 45e4;
-var RATE_PER_HOUR = 6;
+var TOOLS = ["marker", "chalk", "brush", "spray", "pencil", "glitter", "neon"];
+var COLORS = ["yellow", "pink", "mint", "blue", "lavender", "peach"];
+var PINS = ["red", "yellow", "mint", "pink", "blue", "purple"];
+var LIMITS = { stroke: 240, note: 12, edit: 600 };
 var sha = (s) => createHash("sha256").update(String(s)).digest("hex");
 var json = (data, status = 200) => new Response(JSON.stringify(data), {
   status,
   headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" }
 });
-var clean = (v, max) => String(v ?? "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
+var clean = (v, max) => String(v ?? "").replace(/[\u0000-\u0009\u000b-\u001f\u007f]/g, " ").slice(0, max);
 var num = (v, min, max, d) => {
   const n = Number(v);
   return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : d;
 };
-var COLORS = ["yellow", "pink", "mint", "blue", "lavender", "peach"];
-var PINS = ["red", "yellow", "mint", "pink", "blue", "purple"];
-async function listAll(store) {
+var ts13 = (t) => String(t).padStart(13, "0");
+var keyOf = (item) => `item/${ts13(item.updatedAt)}-${item.id}`;
+var publicView = (i) => {
+  const { tokenHash, ip, ...rest } = i;
+  return rest;
+};
+async function findKey(store, id) {
   const { blobs } = await store.list({ prefix: "item/" });
-  const items = await Promise.all(blobs.map((b) => store.get(b.key, { type: "json" })));
-  return items.filter(Boolean).sort((a, b) => a.createdAt - b.createdAt);
+  const hit = blobs.find((b) => b.key.endsWith(`-${id}`));
+  return hit ? hit.key : null;
+}
+async function rate(store, ip, kind) {
+  const hour = Math.floor(Date.now() / 36e5);
+  const k = `rl/${kind}/${sha(ip).slice(0, 16)}/${hour}`;
+  const n = Number(await store.get(k) || 0);
+  if (n >= LIMITS[kind]) return false;
+  await store.set(k, String(n + 1));
+  return true;
 }
 var src_default = async (req, context) => {
-  const store = getStore({ name: "reviews", consistency: "strong" });
+  const store = getStore({ name: "reviews-live", consistency: "strong" });
   const url = new URL(req.url);
   const isAdmin = sha(req.headers.get("x-admin-key") || "") === ADMIN_HASH;
   if (req.method === "GET") {
-    const all = await listAll(store);
-    if (url.searchParams.get("admin")) {
-      if (!isAdmin) return json({ error: "forbidden" }, 403);
-      return json({ items: all });
-    }
-    return json({ items: all.filter((i) => i.status === "approved") });
+    const since = Number(url.searchParams.get("since") || 0);
+    const now2 = Date.now();
+    const [{ blobs }, dels] = await Promise.all([store.list({ prefix: "item/" }), store.list({ prefix: "del/" })]);
+    const fresh = blobs.filter((b) => Number(b.key.slice(5, 18)) > since);
+    const items = (await Promise.all(fresh.map((b) => store.get(b.key, { type: "json" })))).filter(Boolean);
+    const deleted = since ? dels.blobs.filter((b) => Number(b.key.slice(4, 17)) > since).map((b) => b.key.slice(18)) : [];
+    if (isAdmin && url.searchParams.get("admin")) return json({ now: now2, admin: true, items: items.map(publicView), deleted });
+    const out = items.map((i) => {
+      if (i.type !== "note" || i.signed) return publicView(i);
+      if (now2 - i.updatedAt > 36e5) return null;
+      return { ...publicView(i), text: "", name: "", company: "", role: "", typing: true };
+    }).filter(Boolean);
+    return json({ now: now2, items: out, deleted });
   }
   if (req.method !== "POST") return json({ error: "method" }, 405);
   let body;
@@ -934,72 +955,80 @@ var src_default = async (req, context) => {
   } catch {
     return json({ error: "bad json" }, 400);
   }
-  if (body.action) {
-    if (!isAdmin) return json({ error: "forbidden" }, 403);
-    const key = `item/${clean(body.id, 64)}`;
-    const item2 = await store.get(key, { type: "json" });
-    if (!item2) return json({ error: "not found" }, 404);
-    if (body.action === "delete") {
-      await store.delete(key);
-      return json({ ok: true });
-    }
-    if (body.action === "approve") {
-      item2.status = "approved";
-      await store.setJSON(key, item2);
-      return json({ ok: true });
-    }
-    return json({ error: "unknown action" }, 400);
-  }
   if (body.website) return json({ ok: true });
   const ip = context?.ip || req.headers.get("x-nf-client-connection-ip") || "x";
-  const hour = Math.floor(Date.now() / 36e5);
-  const rlKey = `rl/${sha(ip).slice(0, 16)}/${hour}`;
-  const count = Number(await store.get(rlKey) || 0);
-  if (count >= RATE_PER_HOUR) return json({ error: "rate" }, 429);
-  await store.set(rlKey, String(count + 1));
-  const name = clean(body.name, 60);
-  if (name.length < 2) return json({ error: "name" }, 400);
-  const base = {
-    id: randomUUID(),
-    status: "pending",
-    createdAt: Date.now(),
-    name,
-    x: num(body.x, 0, 1600, 800),
-    y: num(body.y, 0, 2e5, 450)
-  };
-  let item;
-  if (body.type === "note") {
-    const text = clean(body.text, 420);
-    const company = clean(body.company, 60);
-    const role = clean(body.role, 60);
-    if (text.length < 5 || !company || !role) return json({ error: "fields" }, 400);
-    item = {
-      ...base,
-      type: "note",
-      text,
-      company,
-      role,
-      color: COLORS.includes(body.color) ? body.color : "yellow",
-      pin: PINS.includes(body.pin) ? body.pin : PINS[Math.floor(Math.random() * PINS.length)],
-      rot: num(body.rot, -8, 8, 0)
+  const now = Date.now();
+  if (body.op === "stroke") {
+    if (!await rate(store, ip, "stroke")) return json({ error: "rate" }, 429);
+    const tool = TOOLS.includes(body.tool) ? body.tool : "marker";
+    const raw = Array.isArray(body.pts) ? body.pts.slice(0, 4e3) : [];
+    const pts = raw.map((v, i) => Math.round(num(v, 0, i % 2 ? 2e5 : 1600, 0)));
+    if (pts.length < 2) return json({ error: "pts" }, 400);
+    const token = randomBytes(12).toString("hex");
+    const item = {
+      id: randomUUID(),
+      type: "stroke",
+      tool,
+      seed: num(body.seed, 0, 2 ** 31, 1) | 0,
+      pts,
+      createdAt: now,
+      updatedAt: now,
+      tokenHash: sha(token)
     };
-  } else if (body.type === "drawing") {
-    const img = String(body.image || "");
-    if (!/^data:image\/(webp|png);base64,[A-Za-z0-9+/=]+$/.test(img) || img.length > MAX_DRAWING) {
-      return json({ error: "image" }, 400);
-    }
-    item = {
-      ...base,
-      type: "drawing",
-      image: img,
-      w: num(body.w, 10, 1600, 200),
-      h: num(body.h, 10, 6e3, 200)
-    };
-  } else {
-    return json({ error: "type" }, 400);
+    await store.setJSON(keyOf(item), item);
+    return json({ ok: true, id: item.id, token, updatedAt: now });
   }
-  await store.setJSON(`item/${item.id}`, item);
-  return json({ ok: true, id: item.id, status: item.status });
+  if (body.op === "note") {
+    if (!await rate(store, ip, "note")) return json({ error: "rate" }, 429);
+    const token = randomBytes(12).toString("hex");
+    const item = {
+      id: randomUUID(),
+      type: "note",
+      signed: false,
+      x: num(body.x, 0, 1600, 800),
+      y: num(body.y, 0, 2e5, 400),
+      color: COLORS.includes(body.color) ? body.color : "yellow",
+      pin: PINS.includes(body.pin) ? body.pin : PINS[0],
+      rot: num(body.rot, -8, 8, 0),
+      text: "",
+      name: "",
+      company: "",
+      role: "",
+      createdAt: now,
+      updatedAt: now,
+      tokenHash: sha(token)
+    };
+    await store.setJSON(keyOf(item), item);
+    return json({ ok: true, id: item.id, token, updatedAt: now });
+  }
+  if (body.op === "edit" || body.op === "delete") {
+    const id = clean(body.id, 64);
+    const key = await findKey(store, id);
+    if (!key) return json({ error: "not found" }, 404);
+    const item = await store.get(key, { type: "json" });
+    if (!item) return json({ error: "not found" }, 404);
+    const owner = body.token && sha(body.token) === item.tokenHash;
+    if (!owner && !isAdmin) return json({ error: "forbidden" }, 403);
+    if (body.op === "delete") {
+      await store.delete(key);
+      await store.set(`del/${ts13(now)}-${id}`, "1");
+      return json({ ok: true });
+    }
+    if (item.type !== "note") return json({ error: "type" }, 400);
+    if (!await rate(store, ip, "edit")) return json({ error: "rate" }, 429);
+    item.text = clean(body.text, 420);
+    item.name = clean(body.name, 60);
+    item.company = clean(body.company, 60);
+    item.role = clean(body.role, 60);
+    if (body.x != null) item.x = num(body.x, 0, 1600, item.x);
+    if (body.y != null) item.y = num(body.y, 0, 2e5, item.y);
+    item.signed = item.text.trim().length >= 3 && item.name.trim().length >= 2 && !!item.company.trim() && !!item.role.trim();
+    item.updatedAt = now;
+    await store.delete(key);
+    await store.setJSON(keyOf(item), item);
+    return json({ ok: true, signed: item.signed, updatedAt: now });
+  }
+  return json({ error: "op" }, 400);
 };
 var config = { path: "/api/reviews" };
 export {
