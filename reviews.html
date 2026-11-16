@@ -197,7 +197,7 @@
       needSign:'Допишите отзыв, имя, должность и компанию — и стикер появится у всех', posted:'Готово! Стикер на доске 💛',
       dropHint:'Перетащите стикер на доску', errNet:'Нет связи, повторим…', errRate:'Слишком много за час — попробуйте позже',
       adminbar:'Админ: ✕ на стикере — удалить; клик по рисунку на доске — удалить штрих.', confirmDel:'Удалить?',
-      tools:{ marker:'Маркер', chalk:'Мел', brush:'Краска', spray:'Баллончик', pencil:'Карандаш', glitter:'Глиттер', neon:'Неон' } },
+      tools:{ marker:'Маркер', chalk:'Мел', brush:'Краска', spray:'Баллончик', pencil:'Карандаш', glitter:'Глиттер', neon:'Неон', eraser:'Ластик' } },
     en: { back:'← Back to site', eyebrow:'Reviews', title:'Reviews <span>board</span>',
       lead:'Worked with me? Peel a sticky note off the pad below, stick it on the board and write your review. Or grab a marker, chalk or spray can and draw right on the board. Everyone sees it instantly, in real time ✨',
       empty:'Nothing here yet —<br>be the first ✨', more:'↓ The board is endless — scroll down, there is room for everyone',
@@ -208,13 +208,13 @@
       needSign:'Add the review, your name, position and company — then everyone will see it', posted:'Done! Your note is on the board 💛',
       dropHint:'Drag the note onto the board', errNet:'Connection lost, retrying…', errRate:'Too many in an hour — try again later',
       adminbar:'Admin: ✕ on a note deletes it; click a drawing on the board to delete that stroke.', confirmDel:'Delete?',
-      tools:{ marker:'Marker', chalk:'Chalk', brush:'Paint', spray:'Spray', pencil:'Pencil', glitter:'Glitter', neon:'Neon' } }
+      tools:{ marker:'Marker', chalk:'Chalk', brush:'Paint', spray:'Spray', pencil:'Pencil', glitter:'Glitter', neon:'Neon', eraser:'Eraser' } }
   };
   var COLORS = { yellow:'#fde68a', pink:'#f9a8d4', mint:'#a7f3d0', blue:'#bae6fd', lavender:'#ddd6fe', peach:'#fdba74' };
   var PINS = ['red','yellow','mint','pink','blue','purple'];
   var TOOLS = [
     { id:'marker', tip:'tr' }, { id:'chalk', tip:'tr' }, { id:'brush', tip:'tr' }, { id:'spray', tip:'tr' },
-    { id:'pencil', tip:'tr' }, { id:'glitter', tip:'bl' }, { id:'neon', tip:'bl' }
+    { id:'pencil', tip:'tr' }, { id:'glitter', tip:'bl' }, { id:'neon', tip:'bl' }, { id:'eraser', tip:'tr', flat:true }
   ];
 
   var params = new URLSearchParams(location.search);
@@ -335,6 +335,9 @@
         var gc = ['#fff8d6', '#ffe27a', '#ffffff', '#e6b422'];
         for (var z = 0; z < steps * 3; z++) { var gt = R(); ctx.globalAlpha = .6 + R() * .4; ctx.fillStyle = gc[(R() * gc.length) | 0]; var gs = .8 + R() * 2.2; ctx.fillRect(a.x + dx * gt + (R() - .5) * 12, a.y + dy * gt + (R() - .5) * 12, gs, gs); }
         break;
+      case 'eraser':
+        ctx.globalCompositeOperation = 'destination-out'; ctx.globalAlpha = 1; ctx.strokeStyle = '#000'; ctx.lineWidth = 34; ctx.lineCap = ctx.lineJoin = 'round';
+        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); break;
       case 'neon':
         ctx.lineCap = ctx.lineJoin = 'round';
         ctx.shadowColor = '#39ff14'; ctx.shadowBlur = 18; ctx.strokeStyle = '#39ff14'; ctx.lineWidth = 6; ctx.globalAlpha = .9;
@@ -371,7 +374,7 @@
   var tool = null, live = null, liveR = null, lastPt = null;
   TOOLS.forEach(function (t) {
     var b = el('button', 'tool'); b.type = 'button'; b.dataset.tool = t.id;
-    var i = el('img'); i.src = './reviews/tool_' + t.id + '.webp'; i.alt = ''; i.style.setProperty('--r', t.tip === 'tr' ? '-45deg' : '135deg');
+    var i = el('img'); i.src = './reviews/tool_' + t.id + '.webp'; i.alt = ''; i.style.setProperty('--r', t.tip === 'tr' ? '-45deg' : '135deg'); if (t.flat) { i.style.width = '104px'; i.style.bottom = '-44px'; }
     b.appendChild(i); b.appendChild(el('span'));
     b.onclick = function () { setTool(tool === t ? null : t); };
     toolsEl.appendChild(b);
@@ -388,6 +391,7 @@
   function placeCursor(ev) {
     var w = 72, h = cursor.naturalHeight ? cursor.naturalHeight * w / cursor.naturalWidth : 72;
     cursor.style.display = 'block';
+    if (tool.flat) { cursor.style.left = (ev.clientX - w / 2) + 'px'; cursor.style.top = (ev.clientY - h / 2) + 'px'; return; }
     if (tool.tip === 'tr') { cursor.style.left = (ev.clientX - w + 4) + 'px'; cursor.style.top = (ev.clientY - 4) + 'px'; }
     else { cursor.style.left = (ev.clientX - 4) + 'px'; cursor.style.top = (ev.clientY - h + 4) + 'px'; }
   }

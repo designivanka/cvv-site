@@ -896,7 +896,7 @@ var getStore = (input, options) => {
 // src.mjs
 import { createHash, randomUUID, randomBytes } from "node:crypto";
 var ADMIN_HASH = "a2ce9eee8f77e62bc8bf4289b95bbc0413fead1b3a4d563e4cdbf253d6405d6b";
-var TOOLS = ["marker", "chalk", "brush", "spray", "pencil", "glitter", "neon"];
+var TOOLS = ["marker", "chalk", "brush", "spray", "pencil", "glitter", "neon", "eraser"];
 var COLORS = ["yellow", "pink", "mint", "blue", "lavender", "peach"];
 var PINS = ["red", "yellow", "mint", "pink", "blue", "purple"];
 var LIMITS = { stroke: 240, note: 12, edit: 600 };
