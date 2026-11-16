@@ -49,7 +49,7 @@
   .board.is-placing { cursor:crosshair; }
   .board.is-placing .notes, .board.is-drawing .notes { pointer-events:none; }
 
-  .note { position:absolute; width:236px; height:243px; transform:translate(-50%,-50%) rotate(var(--rot,0deg)); filter:drop-shadow(0 10px 12px rgba(0,0,0,.35)); transition:transform .25s; z-index:2; }
+  .note { position:absolute; width:272px; height:280px; transform:translate(-50%,-50%) rotate(var(--rot,0deg)); filter:drop-shadow(0 10px 12px rgba(0,0,0,.35)); transition:transform .25s; z-index:2; }
   .note:hover { transform:translate(-50%,-50%) rotate(0deg) scale(1.06); z-index:5; }
   .note__paper { position:absolute; inset:0; background:url(./reviews/note.webp) center/100% 100% no-repeat; }
   .note--pink .note__paper { filter:hue-rotate(-62deg) saturate(1.9) brightness(1.02); }
@@ -57,14 +57,14 @@
   .note--blue .note__paper { filter:hue-rotate(160deg) saturate(1.6); }
   .note--lavender .note__paper { filter:hue-rotate(215deg) saturate(1.4); }
   .note--peach .note__paper { filter:hue-rotate(-28deg) saturate(1.8); }
-  .note__pin { position:absolute; left:50%; top:-22px; width:34px; transform:translateX(-50%) rotate(8deg); filter:drop-shadow(2px 6px 3px rgba(0,0,0,.35)); }
+  .note__pin { position:absolute; left:50%; top:-24px; width:40px; transform:translateX(-50%) rotate(8deg); filter:drop-shadow(2px 6px 3px rgba(0,0,0,.35)); }
   .note__body { position:absolute; left:22px; right:24px; top:26px; bottom:22px; display:flex; flex-direction:column; color:#2b2214; font-family:'Caveat',cursive; }
-  .note__text { font-size:23px; line-height:1.05; font-weight:500; overflow:hidden; flex:1; word-break:break-word; }
-  .note__sign { font-size:20px; font-weight:700; line-height:1; margin-top:6px; }
+  .note__text { font-size:26px; line-height:1.05; font-weight:500; overflow:hidden; flex:1; word-break:break-word; }
+  .note__sign { font-size:22px; font-weight:700; line-height:1; margin-top:6px; }
   .note__sign small { display:block; font-size:16px; font-weight:500; opacity:.8; margin-top:2px; }
   .note__badge { position:absolute; right:10px; bottom:-14px; font-family:'DM Sans'; font-size:11px; font-weight:700; padding:3px 8px; border-radius:999px; background:#111; color:#fde68a; }
   .note.is-pending { opacity:.82; }
-  .note--long .note__text { font-size:19px; }
+  .note--long .note__text { font-size:21px; }
 
   .admin-tools { position:absolute; top:-12px; right:-12px; display:flex; gap:4px; z-index:6; }
   .admin-tools button { width:30px; height:30px; border-radius:50%; border:0; cursor:pointer; font-weight:800; font-size:15px; color:#fff; box-shadow:0 4px 10px rgba(0,0,0,.4); }
