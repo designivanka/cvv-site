@@ -965,7 +965,7 @@ var src_default = async (req, context) => {
     createdAt: Date.now(),
     name,
     x: num(body.x, 0, 1600, 800),
-    y: num(body.y, 0, 900, 450)
+    y: num(body.y, 0, 2e5, 450)
   };
   let item;
   if (body.type === "note") {
@@ -993,7 +993,7 @@ var src_default = async (req, context) => {
       type: "drawing",
       image: img,
       w: num(body.w, 10, 1600, 200),
-      h: num(body.h, 10, 900, 200)
+      h: num(body.h, 10, 6e3, 200)
     };
   } else {
     return json({ error: "type" }, 400);

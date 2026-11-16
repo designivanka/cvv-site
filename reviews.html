@@ -39,12 +39,15 @@
 
   /* ---- board ---- */
   .board-scroll { overflow-x:auto; padding-bottom:.5rem; -webkit-overflow-scrolling:touch; }
-  .board { position:relative; width:100%; min-width:980px; aspect-ratio:1600/900; border-radius:14px; overflow:hidden;
-    background:url(./reviews/board.jpg) center/100% 100% no-repeat; box-shadow:0 40px 90px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06); user-select:none; }
-  .stage { position:absolute; left:0; top:0; width:1600px; height:900px; transform-origin:0 0; }
+  .board { position:relative; width:100%; min-width:980px; height:700px; border-radius:14px; overflow:hidden;
+    border:22px solid #b07a3c; border-image:url(./reviews/board.jpg) 31 33 31 33 / 22px stretch;
+    background:url(./reviews/cork.jpg) 0 0/420px auto repeat; box-shadow:0 40px 90px rgba(0,0,0,.6), inset 0 6px 18px rgba(0,0,0,.45); user-select:none; }
+  .board::after { content:''; position:absolute; inset:0; pointer-events:none; box-shadow:inset 0 8px 20px rgba(0,0,0,.35); }
+  .stage { position:absolute; left:0; top:0; width:1600px; height:1200px; transform-origin:0 0; }
+  .more { text-align:center; color:var(--muted); font-size:.8rem; margin-top:.6rem; }
   .drawings, .notes, .paint { position:absolute; inset:0; }
   .drawings img { position:absolute; pointer-events:none; }
-  canvas.paint { width:1600px; height:900px; touch-action:none; pointer-events:none; }
+  canvas.paint { width:1600px; touch-action:none; pointer-events:none; }
   .board.is-drawing canvas.paint { pointer-events:auto; cursor:none; }
   .board.is-placing { cursor:crosshair; }
   .board.is-placing .notes, .board.is-drawing .notes { pointer-events:none; }
@@ -72,13 +75,13 @@
   .drawing-wrap { position:absolute; z-index:1; }
   .drawing-wrap.is-pending { outline:2px dashed #fde68a; outline-offset:4px; }
 
-  .empty { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-3deg); font-family:'Caveat',cursive; font-size:44px; color:rgba(255,255,255,.9); text-shadow:0 3px 12px rgba(0,0,0,.5); text-align:center; pointer-events:none; }
+  .empty { position:absolute; left:50%; top:280px; transform:translate(-50%,-50%) rotate(-3deg); font-family:'Caveat',cursive; font-size:44px; color:rgba(255,255,255,.9); text-shadow:0 3px 12px rgba(0,0,0,.5); text-align:center; pointer-events:none; }
   .placing-hint { position:absolute; left:50%; top:16px; transform:translateX(-50%); z-index:20; padding:.55rem 1rem; border-radius:999px; background:#111; color:#fde68a; font-weight:600; font-size:.85rem; display:none; }
   .board.is-placing .placing-hint { display:block; }
 
   /* ---- toolbox ---- */
   .toolbox { display:none; margin-top:1rem; padding:.8rem 1rem; border-radius:16px; background:linear-gradient(180deg,#2a1d14,#1d140e); border:1px solid rgba(255,255,255,.08); box-shadow:inset 0 2px 0 rgba(255,255,255,.05); align-items:center; gap:.4rem; flex-wrap:wrap; }
-  .toolbox.is-open { display:flex; }
+  .toolbox.is-open { display:flex; position:sticky; bottom:12px; z-index:25; box-shadow:0 20px 50px rgba(0,0,0,.6); }
   .tool { width:84px; height:76px; border-radius:12px; border:1px solid transparent; background:none; cursor:pointer; position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding-bottom:4px; transition:transform .2s, background .2s; }
   .tool img { position:absolute; top:2px; left:50%; width:62px; transform:translateX(-50%) rotate(0deg); transition:transform .25s; pointer-events:none; filter:drop-shadow(0 4px 4px rgba(0,0,0,.5)); }
   .tool span { font-size:.66rem; color:#e9d9c6; position:relative; z-index:1; white-space:nowrap; }
@@ -154,13 +157,14 @@
     <div class="board" id="board">
       <div class="stage" id="stage">
         <div class="drawings" id="drawings"></div>
-        <canvas class="paint" id="paint" width="1600" height="900"></canvas>
+        <canvas class="paint" id="paint" width="1600" height="1200"></canvas>
         <div class="notes" id="notes"></div>
       </div>
       <div class="empty" id="empty" data-i18n="empty">Здесь пока пусто —<br>будьте первым ✨</div>
       <div class="placing-hint" data-i18n="placeHint">Нажмите на доску, куда приколоть стикер</div>
     </div>
   </div>
+  <p class="more" data-i18n="more">↓ Доска бесконечная — листайте вниз, места хватит всем</p>
 
   <div class="toolbox" id="toolbox">
     <div id="tools" style="display:flex;gap:.2rem;flex-wrap:wrap"></div>
@@ -211,7 +215,7 @@
       cancel:'Отмена', pinIt:'📌 Приколоть на доску', footer:'Стикеры и рисунки публикуются после проверки.',
       pending:'на проверке', sent:'Спасибо! Появится на доске после проверки 💛', errFields:'Заполните отзыв, имя, компанию и должность',
       errName:'Напишите имя и фамилию', errEmpty:'Сначала нарисуйте что-нибудь', errNet:'Не получилось отправить, попробуйте ещё раз', errRate:'Слишком много за час — попробуйте позже',
-      adminbar:'Режим модерации: ✓ — опубликовать, ✕ — удалить.', namePh:'Имя Фамилия', rolePh:'Должность, Компания',
+      adminbar:'Режим модерации: ✓ — опубликовать, ✕ — удалить.', more:'↓ Доска бесконечная — листайте вниз, места хватит всем', namePh:'Имя Фамилия', rolePh:'Должность, Компания',
       tools:{ marker:'Маркер', chalk:'Мел', brush:'Краска', spray:'Баллончик', pencil:'Карандаш', glitter:'Глиттер', neon:'Неон' } },
     en: { back:'← Back to site', eyebrow:'Reviews', title:'Reviews <span>board</span>',
       lead:'Worked with me? Pin a sticky note with your review — or grab a marker, chalk or spray can and leave a wish right on the board. Everything appears after moderation.',
@@ -221,7 +225,7 @@
       cancel:'Cancel', pinIt:'📌 Pin it to the board', footer:'Notes and drawings are published after review.',
       pending:'in review', sent:'Thank you! It will appear on the board after review 💛', errFields:'Please fill in the review, name, company and position',
       errName:'Please add your first and last name', errEmpty:'Draw something first', errNet:'Could not send, please try again', errRate:'Too many in an hour — try again later',
-      adminbar:'Moderation mode: ✓ — publish, ✕ — delete.', namePh:'First Last', rolePh:'Position, Company',
+      adminbar:'Moderation mode: ✓ — publish, ✕ — delete.', more:'↓ The board is endless — scroll down, there is room for everyone', namePh:'First Last', rolePh:'Position, Company',
       tools:{ marker:'Marker', chalk:'Chalk', brush:'Paint', spray:'Spray', pencil:'Pencil', glitter:'Glitter', neon:'Neon' } }
   };
   var COLORS = { yellow:'#fde68a', pink:'#f9a8d4', mint:'#a7f3d0', blue:'#bae6fd', lavender:'#ddd6fe', peach:'#fdba74' };
@@ -239,7 +243,20 @@
   var toast = document.getElementById('toast');
 
   // ---- scale the 1600×900 stage to the board ----
-  function fit() { stage.style.transform = 'scale(' + (board.clientWidth / 1600) + ')'; }
+  var H = 1200;
+  function fit() {
+    var s = board.clientWidth / 1600;
+    stage.style.transform = 'scale(' + s + ')';
+    stage.style.height = H + 'px'; canvas.style.height = H + 'px';
+    board.style.height = Math.round(H * s + 44) + 'px';
+  }
+  // grow the board downwards, keeping what is already drawn
+  function setH(nh) {
+    nh = Math.ceil(nh / 300) * 300;
+    if (nh <= H) return;
+    var keep = document.createElement('canvas'); keep.width = 1600; keep.height = H; keep.getContext('2d').drawImage(canvas, 0, 0);
+    canvas.height = nh; ctx.drawImage(keep, 0, 0); H = nh; fit();
+  }
   window.addEventListener('resize', fit); fit();
 
   function showToast(msg) { toast.textContent = msg; toast.classList.add('is-on'); clearTimeout(showToast.t); showToast.t = setTimeout(function () { toast.classList.remove('is-on'); }, 3200); }
@@ -301,6 +318,8 @@
       (it.type === 'drawing' ? drawingsEl : notesEl).appendChild(node);
     });
     emptyEl.style.display = list.length ? 'none' : '';
+    var bottom = 0; list.forEach(function (i) { bottom = Math.max(bottom, i.type === 'drawing' ? i.y + i.h : i.y + 160); });
+    setH(Math.max(1200, bottom + 900));
   }
 
   function load() {
@@ -358,13 +377,13 @@
     board.classList.add('is-placing'); board.scrollIntoView({ behavior:'smooth', block:'center' });
   });
   function boardPoint(ev) {
-    var r = board.getBoundingClientRect(), s = r.width / 1600;
+    var r = stage.getBoundingClientRect(), s = r.width / 1600;
     return { x:(ev.clientX - r.left) / s, y:(ev.clientY - r.top) / s };
   }
   board.addEventListener('click', function (ev) {
     if (!pendingNote || !board.classList.contains('is-placing')) return;
     var p = boardPoint(ev);
-    pendingNote.x = Math.round(Math.min(1480, Math.max(120, p.x))); pendingNote.y = Math.round(Math.min(780, Math.max(140, p.y)));
+    pendingNote.x = Math.round(Math.min(1480, Math.max(120, p.x))); pendingNote.y = Math.round(Math.max(140, p.y)); setH(pendingNote.y + 900);
     board.classList.remove('is-placing');
     var payload = pendingNote; pendingNote = null;
     post(payload).then(function (d) {
@@ -389,7 +408,7 @@
   function setDrawing(on) {
     drawing = on; board.classList.toggle('is-drawing', on); document.getElementById('toolbox').classList.toggle('is-open', on);
     var b = document.getElementById('btnDraw'); b.classList.toggle('is-on', on); b.innerHTML = on ? T().drawOff : T().draw;
-    if (on) { syncTools(); board.scrollIntoView({ behavior:'smooth', block:'center' }); } else cursor.style.display = 'none';
+    if (on) { syncTools(); if (board.getBoundingClientRect().top > innerHeight * .5) board.scrollIntoView({ behavior:'smooth', block:'start' }); } else cursor.style.display = 'none';
   }
   document.getElementById('btnDraw').onclick = function () { setDrawing(!drawing); };
 
@@ -445,6 +464,7 @@
         break;
     }
     ctx.restore(); grow(b.x, b.y, tool.id === 'spray' ? 34 : 24); dirty = true;
+    if (b.y > H - 400) setH(H + 600);
   }
   function dripLoop() {
     if (drips.length) {
@@ -467,19 +487,19 @@
   ['pointerup', 'pointercancel'].forEach(function (n) { canvas.addEventListener(n, function () { last = null; }); });
   canvas.addEventListener('pointerleave', function () { if (!last) cursor.style.display = 'none'; });
 
-  document.getElementById('btnClear').onclick = function () { ctx.clearRect(0, 0, 1600, 900); bbox = null; dirty = false; drips = []; };
+  document.getElementById('btnClear').onclick = function () { ctx.clearRect(0, 0, 1600, H); bbox = null; dirty = false; drips = []; };
   document.getElementById('btnSendDrawing').onclick = function () {
     var name = document.getElementById('drawName').value.trim();
     if (!dirty || !bbox) return showToast(T().errEmpty);
     if (name.length < 2) { document.getElementById('drawName').focus(); return showToast(T().errName); }
-    var x0 = Math.max(0, Math.floor(bbox.x0)), y0 = Math.max(0, Math.floor(bbox.y0)), x1 = Math.min(1600, Math.ceil(bbox.x1)), y1 = Math.min(900, Math.ceil(bbox.y1));
+    var x0 = Math.max(0, Math.floor(bbox.x0)), y0 = Math.max(0, Math.floor(bbox.y0)), x1 = Math.min(1600, Math.ceil(bbox.x1)), y1 = Math.min(H, Math.ceil(bbox.y1));
     var w = x1 - x0, h = y1 - y0, c = document.createElement('canvas'); c.width = w; c.height = h;
     c.getContext('2d').drawImage(canvas, x0, y0, w, h, 0, 0, w, h);
     var img = c.toDataURL('image/webp', .82); if (img.indexOf('data:image/webp') !== 0) img = c.toDataURL('image/png');
     var payload = { type:'drawing', name:name, image:img, x:x0, y:y0, w:w, h:h };
     post(payload).then(function (d) {
       mine.push({ type:'drawing', id:d.id, name:name, image:img, x:x0, y:y0, w:w, h:h, createdAt:Date.now() }); saveMine();
-      ctx.clearRect(0, 0, 1600, 900); bbox = null; dirty = false; setDrawing(false); renderAll(); showToast(T().sent);
+      ctx.clearRect(0, 0, 1600, H); bbox = null; dirty = false; setDrawing(false); renderAll(); showToast(T().sent);
     }).catch(function (e) { showToast(e.code === 429 ? T().errRate : T().errNet); });
   };
 
