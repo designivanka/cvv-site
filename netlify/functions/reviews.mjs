@@ -936,9 +936,33 @@ var src_default = async (req, context) => {
   if (req.method === "GET") {
     const since = Number(url.searchParams.get("since") || 0);
     const now2 = Date.now();
-    const [{ blobs }, dels] = await Promise.all([store.list({ prefix: "item/" }), store.list({ prefix: "del/" })]);
+    const [{ blobs }, dels] = await Promise.all([
+      store.list({ prefix: "item/" }),
+      since ? store.list({ prefix: "del/" }) : Promise.resolve({ blobs: [] })
+    ]);
     const fresh = blobs.filter((b) => Number(b.key.slice(5, 18)) > since);
-    const items = (await Promise.all(fresh.map((b) => store.get(b.key, { type: "json" })))).filter(Boolean);
+    let items;
+    if (!since) {
+      const snap = await store.get("snap", { type: "json" }).catch(() => null) || { items: {} };
+      const cached = snap.items || {};
+      const need = [];
+      items = [];
+      for (const b of fresh) {
+        const ts = Number(b.key.slice(5, 18)), id = b.key.slice(19), c = cached[id];
+        if (c && c.updatedAt === ts) items.push(c);
+        else need.push(b);
+      }
+      const got = (await Promise.all(need.map((b) => store.get(b.key, { type: "json" })))).filter(Boolean);
+      items.push(...got);
+      if (need.length) {
+        const map = {};
+        for (const i of items) map[i.id] = i;
+        await store.setJSON("snap", { at: now2, items: map }).catch(() => {
+        });
+      }
+    } else {
+      items = (await Promise.all(fresh.map((b) => store.get(b.key, { type: "json" })))).filter(Boolean);
+    }
     const deleted = since ? dels.blobs.filter((b) => Number(b.key.slice(4, 17)) > since).map((b) => b.key.slice(18)) : [];
     if (isAdmin && url.searchParams.get("admin")) return json({ now: now2, admin: true, items: items.map(publicView), deleted });
     const out = items.map((i) => {
