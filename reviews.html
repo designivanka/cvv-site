@@ -50,6 +50,9 @@
   body.is-drawing .note { pointer-events:none; }
   body.is-admin:not(.is-drawing) canvas.paint { cursor:crosshair; }
   .more { text-align:center; color:var(--muted); font-size:.8rem; margin-top:.6rem; }
+  .empty.is-loading { font-size:34px; display:flex; flex-direction:column; align-items:center; gap:14px; }
+  .spin { width:46px; height:46px; border-radius:50%; border:5px solid rgba(255,255,255,.25); border-top-color:#fde68a; animation:spin .8s linear infinite; }
+  @keyframes spin { to { transform:rotate(360deg); } }
   .empty { position:absolute; left:50%; top:300px; transform:translate(-50%,-50%) rotate(-3deg); font-family:'Caveat',cursive; font-size:44px; color:rgba(255,255,255,.92); text-shadow:0 3px 12px rgba(0,0,0,.5); text-align:center; pointer-events:none; line-height:1.1; }
 
   /* ---- notes ---- */
@@ -198,7 +201,7 @@
         <canvas class="paint" id="paint" width="1600" height="1200"></canvas>
         <div class="notes" id="notes"></div>
       </div>
-      <div class="empty" id="empty" data-i18n="empty"></div>
+      <div class="empty" id="empty"></div>
       <div class="zoombtns"><button type="button" id="zIn" aria-label="zoom in">+</button><button type="button" id="zOut" aria-label="zoom out">−</button></div>
       <div class="gesture-hint" id="gHint" data-i18n="gesture"></div>
     </div>
@@ -235,7 +238,7 @@
       footer:'Заполните отзыв, имя, должность и компанию и нажмите «📌 Приколоть» — стикер появится у всех. Свой стикер можно изменить или удалить с того же устройства — чужие нельзя.',
       peel:'отклей меня', undo:'↶ Отменить штрих', hand:'✋ Положить',
       textPh:'Ваш отзыв: как работалось, что получилось…', namePh:'Имя Фамилия *', rolePh:'Должность *', companyPh:'Компания *',
-      readMore:'читать целиком →', gesture:'👆 двигайте доску · 🤏 двумя пальцами — приблизить', capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? Изменить или удалить его сможете только вы — с этого же устройства.', editBtn:'✏️ Изменить', saveBtn:'💾 Сохранить', editing:'редактирование', savedNote:'Сохранено ✓', confirmDelMine:'Удалить ваш стикер с доски?', del:'Удалить', typing:'кто-то пишет',
+      readMore:'читать целиком →', loading:'Подождите, сейчас быстренько<br>загрузятся отзывы!', gesture:'👆 двигайте доску · 🤏 двумя пальцами — приблизить', capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? Изменить или удалить его сможете только вы — с этого же устройства.', editBtn:'✏️ Изменить', saveBtn:'💾 Сохранить', editing:'редактирование', savedNote:'Сохранено ✓', confirmDelMine:'Удалить ваш стикер с доски?', del:'Удалить', typing:'кто-то пишет',
       needSign:'Допишите отзыв, имя, должность и компанию — и стикер появится у всех', posted:'Готово! Стикер на доске 💛',
       dropHint:'Перетащите стикер на доску', errNet:'Нет связи, повторим…', errRate:'Слишком много за час — попробуйте позже',
       adminbar:'Админ: фото-полароид можно перетаскивать и подписывать — всё сохраняется само. Клик по рисунку на доске — удалить штрих.', confirmDel:'Удалить?',
@@ -246,7 +249,7 @@
       footer:'Fill in the review, name, position and company and press “📌 Pin it” — everyone will see it. You can edit or delete your own note from the same device — not anyone else’s.',
       peel:'peel me off', undo:'↶ Undo stroke', hand:'✋ Put down',
       textPh:'Your review: what it was like, what we achieved…', namePh:'First Last *', rolePh:'Position *', companyPh:'Company *',
-      readMore:'read all →', gesture:'👆 drag to move · 🤏 pinch to zoom', capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? Only you can edit or delete it later — from this same device.', editBtn:'✏️ Edit', saveBtn:'💾 Save', editing:'editing', savedNote:'Saved ✓', confirmDelMine:'Delete your note from the board?', del:'Delete', typing:'someone is writing',
+      readMore:'read all →', loading:'Hang on, the reviews<br>are loading!', gesture:'👆 drag to move · 🤏 pinch to zoom', capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? Only you can edit or delete it later — from this same device.', editBtn:'✏️ Edit', saveBtn:'💾 Save', editing:'editing', savedNote:'Saved ✓', confirmDelMine:'Delete your note from the board?', del:'Delete', typing:'someone is writing',
       needSign:'Add the review, your name, position and company — then everyone will see it', posted:'Done! Your note is on the board 💛',
       dropHint:'Drag the note onto the board', errNet:'Connection lost, retrying…', errRate:'Too many in an hour — try again later',
       adminbar:'Admin: click a drawing on the board to delete that stroke.', confirmDel:'Delete?',
@@ -336,6 +339,10 @@
     fetch(url, { cache:'no-store', headers: adminKey ? { 'x-admin-key':adminKey } : {} }).then(function (r) { if (!r.ok) throw r; return r.json(); }).then(function (d) {
       fails = 0; liveEl.classList.remove('is-off');
       var first = !since, needRedraw = false, fresh = [];
+      if (first) { // drop anything from the cached copy that is no longer on the server
+        var live0 = {}; (d.items || []).forEach(function (i) { live0[i.id] = 1; });
+        Object.keys(items).forEach(function (id) { if (live0[id] || mine[id] || id.indexOf('tmp-') === 0) return; if (items[id].type === 'stroke') needRedraw = true; else removeNoteEl(id); delete items[id]; });
+      }
       (d.deleted || []).forEach(function (id) { if (items[id]) { if (items[id].type === 'stroke') needRedraw = true; else removeNoteEl(id); delete items[id]; } if (mine[id]) { delete mine[id]; saveMine(); } });
       (d.items || []).forEach(function (it) {
         var prev = items[it.id];
@@ -347,13 +354,32 @@
       });
       if (needRedraw) redrawAll(); else { fresh.sort(function (a, b) { return a.createdAt - b.createdAt; }); fresh.forEach(function (s) { renderStroke(s, !first); }); }
       since = Math.max(0, d.now - 6000); // overlap so nothing slips between list and write
-      ensureH(); syncEmpty(); syncUndo();
+      loaded = true; ensureH(); syncEmpty(); syncUndo();
+      if (first || (d.items || []).length || (d.deleted || []).length) saveCache();
     }).catch(function () { fails++; if (fails > 1) liveEl.classList.add('is-off'); }).then(function () { polling = false; schedule(); });
   }
   function schedule() { clearTimeout(pollTimer); pollTimer = setTimeout(poll, document.hidden ? 15000 : (fails ? 5000 : 2500)); }
   document.addEventListener('visibilitychange', function () { if (!document.hidden) { clearTimeout(pollTimer); poll(); } });
 
-  function syncEmpty() { emptyEl.style.display = Object.keys(items).length ? 'none' : ''; }
+  var loaded = false;
+  function syncEmpty() {
+    var has = Object.keys(items).length;
+    emptyEl.innerHTML = loaded ? T().empty : '<span class="spin"></span>' + T().loading;
+    emptyEl.classList.toggle('is-loading', !loaded);
+    emptyEl.style.display = has ? 'none' : '';
+  }
+  // last known board kept in the browser, so a repeat visit shows everything instantly
+  function saveCache() {
+    try { var list = Object.keys(items).map(function (k) { return items[k]; }).filter(function (i) { return String(i.id).indexOf('tmp-') !== 0 && !(i.type === 'note' && !i.signed); });
+      localStorage.setItem('cvv-live-cache', JSON.stringify(list)); } catch (e) {}
+  }
+  function loadCache() {
+    var list = []; try { list = JSON.parse(localStorage.getItem('cvv-live-cache') || '[]') || []; } catch (e) {}
+    list.forEach(function (it) { items[it.id] = it; });
+    if (!list.length) return;
+    ensureH(); redrawAll();
+    list.forEach(function (it) { if (it.type === 'note') renderNote(it); else if (it.type === 'photo') renderPhoto(it); });
+  }
 
   // ---------- deterministic stroke rendering ----------
   function rng(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; var t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
@@ -820,10 +846,11 @@
     document.querySelectorAll('[data-lang]').forEach(function (b) { b.classList.toggle('is-active', b.getAttribute('data-lang') === lang); });
     toolsEl.querySelectorAll('.tool').forEach(function (b) { b.querySelector('span').textContent = t.tools[b.dataset.tool]; b.setAttribute('aria-label', t.tools[b.dataset.tool]); });
     Object.keys(items).forEach(function (id) { if (items[id].type === 'note') renderNote(items[id]); });
+    syncEmpty();
   }
   document.querySelectorAll('[data-lang]').forEach(function (b) { b.addEventListener('click', function () { lang = b.getAttribute('data-lang'); try { localStorage.setItem('cvv-lang', lang); } catch (e) {} applyLang(); }); });
 
-  applyLang(); syncEmpty(); poll();
+  loadCache(); applyLang(); syncEmpty(); poll();
 })();
 </script>
 </body>
