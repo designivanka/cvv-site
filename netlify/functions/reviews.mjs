@@ -1048,7 +1048,7 @@ var src_default = async (req, context) => {
     }
     if (item.type !== "note") return json({ error: "type" }, 400);
     if (!await rate(store, ip, "edit")) return json({ error: "rate" }, 429);
-    item.text = clean(body.text, 420);
+    item.text = clean(body.text, 1500);
     item.name = clean(body.name, 60);
     item.company = clean(body.company, 60);
     item.role = clean(body.role, 60);

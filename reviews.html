@@ -69,7 +69,14 @@
   .note__pin { position:absolute; left:50%; top:-24px; width:40px; transform:translateX(-50%) rotate(8deg); filter:drop-shadow(2px 6px 3px rgba(0,0,0,.35)); pointer-events:none; }
   .note__body { position:absolute; left:22px; right:24px; top:26px; bottom:22px; display:flex; flex-direction:column; color:#2b2214; font-family:'Caveat',cursive; }
   .note__text { font-size:26px; line-height:1.05; font-weight:500; overflow:hidden; flex:1; word-break:break-word; white-space:pre-wrap; }
-  .note--long .note__text { font-size:21px; }
+  .note.is-clipped .note__body::after { content:attr(data-more); position:absolute; right:-6px; bottom:-14px; font-family:'DM Sans'; font-size:12px; font-weight:700; padding:4px 9px; border-radius:999px; background:#111; color:#fde68a; box-shadow:0 3px 8px rgba(0,0,0,.35); }
+  .note.is-clipped .note__text { -webkit-mask-image:linear-gradient(180deg,#000 82%,transparent); mask-image:linear-gradient(180deg,#000 82%,transparent); }
+  .zoom .note-big { position:relative; width:min(600px,90vw); max-height:88vh; overflow:auto; padding:56px 44px 64px; color:#2b2214; font-family:'Caveat',cursive; filter:drop-shadow(0 30px 40px rgba(0,0,0,.55)); cursor:auto; }
+  .zoom .note-big::before { content:''; position:absolute; inset:0; background:url(./reviews/note.webp) center/100% 100% no-repeat; z-index:-1; filter:var(--paper,none); }
+  .zoom .note-big .t { font-size:clamp(22px,3.2vw,30px); line-height:1.15; white-space:pre-wrap; word-break:break-word; }
+  .zoom .note-big .s { font-size:clamp(22px,3vw,30px); font-weight:700; margin-top:18px; }
+  .zoom .note-big .s small { display:block; font-size:.75em; font-weight:500; opacity:.8; }
+  .zoom .note-big .pin { position:absolute; left:50%; top:6px; width:48px; transform:translateX(-50%) rotate(8deg); }
   .note__sign { font-size:22px; font-weight:700; line-height:1; margin-top:6px; }
   .note__sign small { display:block; font-size:16px; font-weight:500; opacity:.8; margin-top:2px; }
   .note textarea, .note input { background:transparent; border:0; outline:none; color:#2b2214; font-family:'Caveat',cursive; width:100%; }
@@ -212,7 +219,7 @@
       footer:'Заполните отзыв, имя, должность и компанию и нажмите «📌 Приколоть» — стикер появится у всех. Свой стикер можно изменить или удалить с того же устройства — чужие нельзя.',
       peel:'отклей меня', undo:'↶ Отменить штрих', hand:'✋ Положить',
       textPh:'Ваш отзыв: как работалось, что получилось…', namePh:'Имя Фамилия *', rolePh:'Должность *', companyPh:'Компания *',
-      capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? Изменить или удалить его сможете только вы — с этого же устройства.', editBtn:'✏️ Изменить', saveBtn:'💾 Сохранить', editing:'редактирование', savedNote:'Сохранено ✓', confirmDelMine:'Удалить ваш стикер с доски?', del:'Удалить', typing:'кто-то пишет',
+      readMore:'читать целиком →', capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? Изменить или удалить его сможете только вы — с этого же устройства.', editBtn:'✏️ Изменить', saveBtn:'💾 Сохранить', editing:'редактирование', savedNote:'Сохранено ✓', confirmDelMine:'Удалить ваш стикер с доски?', del:'Удалить', typing:'кто-то пишет',
       needSign:'Допишите отзыв, имя, должность и компанию — и стикер появится у всех', posted:'Готово! Стикер на доске 💛',
       dropHint:'Перетащите стикер на доску', errNet:'Нет связи, повторим…', errRate:'Слишком много за час — попробуйте позже',
       adminbar:'Админ: фото-полароид можно перетаскивать и подписывать — всё сохраняется само. Клик по рисунку на доске — удалить штрих.', confirmDel:'Удалить?',
@@ -223,7 +230,7 @@
       footer:'Fill in the review, name, position and company and press “📌 Pin it” — everyone will see it. You can edit or delete your own note from the same device — not anyone else’s.',
       peel:'peel me off', undo:'↶ Undo stroke', hand:'✋ Put down',
       textPh:'Your review: what it was like, what we achieved…', namePh:'First Last *', rolePh:'Position *', companyPh:'Company *',
-      capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? Only you can edit or delete it later — from this same device.', editBtn:'✏️ Edit', saveBtn:'💾 Save', editing:'editing', savedNote:'Saved ✓', confirmDelMine:'Delete your note from the board?', del:'Delete', typing:'someone is writing',
+      readMore:'read all →', capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? Only you can edit or delete it later — from this same device.', editBtn:'✏️ Edit', saveBtn:'💾 Save', editing:'editing', savedNote:'Saved ✓', confirmDelMine:'Delete your note from the board?', del:'Delete', typing:'someone is writing',
       needSign:'Add the review, your name, position and company — then everyone will see it', posted:'Done! Your note is on the board 💛',
       dropHint:'Drag the note onto the board', errNet:'Connection lost, retrying…', errRate:'Too many in an hour — try again later',
       adminbar:'Admin: click a drawing on the board to delete that stroke.', confirmDel:'Delete?',
@@ -484,7 +491,7 @@
     var pin = el('img', 'note__pin'); pin.src = './reviews/pin_' + (it.pin || 'red') + '.webp'; pin.alt = ''; n.appendChild(pin);
     var body = el('div', 'note__body'); n.appendChild(body);
     if (ed) {
-      var ta = el('textarea'); ta.maxLength = 420; ta.placeholder = T().textPh; ta.value = it.text || '';
+      var ta = el('textarea'); ta.maxLength = 1500; ta.placeholder = T().textPh; ta.value = it.text || '';
       var nm = el('input', 'n'); nm.maxLength = 60; nm.placeholder = T().namePh; nm.value = it.name || '';
       var row = el('div', 'row');
       var rl = el('input'); rl.maxLength = 60; rl.placeholder = T().rolePh; rl.value = it.role || '';
@@ -514,9 +521,19 @@
         n.appendChild(b3);
       }
     }
+    if (!ed) fitNote(n);
     if (ed) setTimeout(function () { var t = n.querySelector('textarea'); if (t && document.activeElement.tagName !== 'INPUT') t.focus(); }, 30);
     return n;
   }
+  // shrink the handwriting until the whole text fits on the sticker; if it still doesn't, show "read more"
+  function fitNote(n) {
+    var tx = n.querySelector('.note__text'); if (!tx) return;
+    n.classList.remove('is-clipped'); var size = 26; tx.style.fontSize = size + 'px';
+    while (tx.scrollHeight > tx.clientHeight + 1 && size > 14) { size -= 1; tx.style.fontSize = size + 'px'; }
+    if (tx.scrollHeight > tx.clientHeight + 1) { n.classList.add('is-clipped'); n.querySelector('.note__body').setAttribute('data-more', T().readMore); }
+  }
+  function refitAll() { Object.keys(noteEls).forEach(function (id) { var n = noteEls[id]; if (n.classList.contains('note') && editing !== id) fitNote(n); }); }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refitAll);
   function syncBar(n, it) {
     var bar = n.querySelector('.note__bar'); if (!bar) return; bar.innerHTML = '';
     var pub = !!it.signed;
@@ -637,7 +654,17 @@
   }
   function closeZoom() { if (!zoomEl) return; var z = zoomEl; zoomEl = null; z.classList.remove('is-on'); setTimeout(function () { z.remove(); }, 250); }
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeZoom(); });
+  var PAPER = { pink:'hue-rotate(-62deg) saturate(1.9) brightness(1.02)', mint:'hue-rotate(95deg) saturate(1.5)', blue:'hue-rotate(160deg) saturate(1.6)', lavender:'hue-rotate(215deg) saturate(1.4)', peach:'hue-rotate(-28deg) saturate(1.8)' };
   function zoomNote(id) {
+    var it = items[id]; if (!it) return;
+    var box = el('div', 'note-big'); if (PAPER[it.color]) box.style.setProperty('--paper', PAPER[it.color]);
+    box.addEventListener('click', function (e) { e.stopPropagation(); });
+    var pin = el('img', 'pin'); pin.src = './reviews/pin_' + (it.pin || 'red') + '.webp'; pin.alt = ''; box.appendChild(pin);
+    var t = el('div', 't'); t.textContent = it.text || ''; box.appendChild(t);
+    var sg = el('div', 's'); sg.textContent = '— ' + (it.name || ''); var sm = el('small'); sm.textContent = [it.role, it.company].filter(Boolean).join(', '); sg.appendChild(sm); box.appendChild(sg);
+    openZoom(box);
+  }
+  function zoomNoteOld(id) {
     var src = noteEls[id]; if (!src) return;
     var k = Math.min(innerWidth * .86 / NOTE_W, innerHeight * .78 / NOTE_H, 2.6);
     var wrap = el('div'); wrap.style.width = NOTE_W * k + 'px'; wrap.style.height = NOTE_H * k + 'px'; wrap.style.position = 'relative';
