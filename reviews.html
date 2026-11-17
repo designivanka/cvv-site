@@ -156,7 +156,21 @@
     .tool { width:44px; } .tool img { width:100px; bottom:-46px; }
     .dock__in { padding:0 8px; gap:2px; }
     .dbtn { font-size:.7rem; padding:.4rem .6rem; }
+    .tool { width:37px; } .tool img { width:88px; bottom:-40px; }
+    .dock__right { position:absolute; right:8px; bottom:calc(100% + 2px); flex-direction:row; padding:0; }
+    .hero { padding:1rem 0 .7rem; } h1 { font-size:1.8rem; margin:.3rem 0 .4rem; } .lead { font-size:.85rem; line-height:1.45; }
   }
+  /* ---- mobile: the board is a pan & pinch-zoom canvas ---- */
+  body.mob .board-scroll { overflow:hidden; padding-bottom:0; }
+  body.mob .board { min-width:0; height:calc(100svh - 62px - var(--dock) - 14px) !important; touch-action:none; border-width:12px; border-image-width:12px; }
+  body.mob canvas.paint, body.mob .note, body.mob .polaroid { touch-action:none; }
+  body.mob .stage { will-change:transform; }
+  body.mob .more { display:none; }
+  .zoombtns { display:none; position:absolute; right:10px; top:10px; z-index:12; flex-direction:column; gap:6px; }
+  body.mob .zoombtns { display:flex; }
+  .zoombtns button { width:38px; height:38px; border-radius:50%; border:0; background:rgba(17,17,20,.85); color:#fff; font-size:20px; font-weight:700; box-shadow:0 4px 10px rgba(0,0,0,.4); }
+  .gesture-hint { position:absolute; left:50%; bottom:12px; transform:translateX(-50%); z-index:12; background:rgba(17,17,20,.85); color:#fde68a; font-size:.75rem; font-weight:600; padding:.45rem .8rem; border-radius:999px; white-space:nowrap; pointer-events:none; transition:opacity .6s; display:none; }
+  body.mob .gesture-hint { display:block; }
 </style>
 </head>
 <body>
@@ -185,6 +199,8 @@
         <div class="notes" id="notes"></div>
       </div>
       <div class="empty" id="empty" data-i18n="empty"></div>
+      <div class="zoombtns"><button type="button" id="zIn" aria-label="zoom in">+</button><button type="button" id="zOut" aria-label="zoom out">−</button></div>
+      <div class="gesture-hint" id="gHint" data-i18n="gesture"></div>
     </div>
   </div>
   <p class="more" data-i18n="more"></p>
@@ -219,7 +235,7 @@
       footer:'Заполните отзыв, имя, должность и компанию и нажмите «📌 Приколоть» — стикер появится у всех. Свой стикер можно изменить или удалить с того же устройства — чужие нельзя.',
       peel:'отклей меня', undo:'↶ Отменить штрих', hand:'✋ Положить',
       textPh:'Ваш отзыв: как работалось, что получилось…', namePh:'Имя Фамилия *', rolePh:'Должность *', companyPh:'Компания *',
-      readMore:'читать целиком →', capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? Изменить или удалить его сможете только вы — с этого же устройства.', editBtn:'✏️ Изменить', saveBtn:'💾 Сохранить', editing:'редактирование', savedNote:'Сохранено ✓', confirmDelMine:'Удалить ваш стикер с доски?', del:'Удалить', typing:'кто-то пишет',
+      readMore:'читать целиком →', gesture:'👆 двигайте доску · 🤏 двумя пальцами — приблизить', capPh:'Подпись к фото…', saved:'Место сохранено ✓', draft:'черновик — видите только вы', live:'✓ на доске', done:'📌 Приколоть', confirmPub:'Приколоть стикер на доску? Изменить или удалить его сможете только вы — с этого же устройства.', editBtn:'✏️ Изменить', saveBtn:'💾 Сохранить', editing:'редактирование', savedNote:'Сохранено ✓', confirmDelMine:'Удалить ваш стикер с доски?', del:'Удалить', typing:'кто-то пишет',
       needSign:'Допишите отзыв, имя, должность и компанию — и стикер появится у всех', posted:'Готово! Стикер на доске 💛',
       dropHint:'Перетащите стикер на доску', errNet:'Нет связи, повторим…', errRate:'Слишком много за час — попробуйте позже',
       adminbar:'Админ: фото-полароид можно перетаскивать и подписывать — всё сохраняется само. Клик по рисунку на доске — удалить штрих.', confirmDel:'Удалить?',
@@ -230,7 +246,7 @@
       footer:'Fill in the review, name, position and company and press “📌 Pin it” — everyone will see it. You can edit or delete your own note from the same device — not anyone else’s.',
       peel:'peel me off', undo:'↶ Undo stroke', hand:'✋ Put down',
       textPh:'Your review: what it was like, what we achieved…', namePh:'First Last *', rolePh:'Position *', companyPh:'Company *',
-      readMore:'read all →', capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? Only you can edit or delete it later — from this same device.', editBtn:'✏️ Edit', saveBtn:'💾 Save', editing:'editing', savedNote:'Saved ✓', confirmDelMine:'Delete your note from the board?', del:'Delete', typing:'someone is writing',
+      readMore:'read all →', gesture:'👆 drag to move · 🤏 pinch to zoom', capPh:'Photo caption…', saved:'Position saved ✓', draft:'draft — only you see it', live:'✓ on the board', done:'📌 Pin it', confirmPub:'Pin this note to the board? Only you can edit or delete it later — from this same device.', editBtn:'✏️ Edit', saveBtn:'💾 Save', editing:'editing', savedNote:'Saved ✓', confirmDelMine:'Delete your note from the board?', del:'Delete', typing:'someone is writing',
       needSign:'Add the review, your name, position and company — then everyone will see it', posted:'Done! Your note is on the board 💛',
       dropHint:'Drag the note onto the board', errNet:'Connection lost, retrying…', errRate:'Too many in an hour — try again later',
       adminbar:'Admin: click a drawing on the board to delete that stroke.', confirmDel:'Delete?',
@@ -270,10 +286,23 @@
 
   // ---------- scale + endless height ----------
   var H = 1200, S = 1;
+  var MOB = matchMedia('(max-width: 760px), (hover: none) and (pointer: coarse)').matches;
+  if (MOB) document.body.classList.add('mob');
+  var Z = 1, TX = 0, TY = 0; // mobile viewport: user zoom + pan (in screen px)
+  function clampView() {
+    var w = board.clientWidth, h = board.clientHeight, cw = W * S, ch = H * S;
+    TX = Math.min(0, Math.max(Math.min(0, w - cw), TX));
+    TY = Math.min(0, Math.max(Math.min(0, h - ch), TY));
+  }
   function fit() {
+    stage.style.height = H + 'px'; canvas.style.height = H + 'px';
+    if (MOB) {
+      S = board.clientWidth / W * Z; clampView();
+      stage.style.transform = 'translate(' + TX + 'px,' + TY + 'px) scale(' + S + ')';
+      return;
+    }
     S = board.clientWidth / W;
     stage.style.transform = 'scale(' + S + ')';
-    stage.style.height = H + 'px'; canvas.style.height = H + 'px';
     board.style.height = Math.round(H * S + 44) + 'px';
   }
   function setH(nh) {
@@ -451,7 +480,8 @@
     });
   }
   canvas.addEventListener('pointerdown', function (ev) {
-    if (!tool) { if (adminKey) adminHit(ev); return; }
+    if (MOB && touches.size > 1) return;
+    if (!tool) { if (adminKey && !MOB) adminHit(ev); return; }
     ev.preventDefault(); canvas.setPointerCapture(ev.pointerId); placeCursor(ev); startStroke(stagePoint(ev));
   });
   canvas.addEventListener('pointermove', function (ev) { if (!tool) return; placeCursor(ev); if (live) extendStroke(stagePoint(ev)); });
@@ -631,6 +661,55 @@
     var c = n.querySelector('.cap'); if (c.tagName === 'TEXTAREA') { if (document.activeElement !== c) c.value = it.caption || ''; } else c.textContent = it.caption || '';
   }
 
+  // ---------- mobile gestures: 1 finger pans (or draws with a tool), 2 fingers pinch-zoom ----------
+  var touches = new Map(), gest = null, lastPan = 0;
+  function zoomAt(nz, cx, cy) { // keep the board point under (cx, cy) in place
+    var r = board.getBoundingClientRect(), ox = r.left + board.clientLeft, oy = r.top + board.clientTop;
+    var px = (cx - ox - TX) / S, py = (cy - oy - TY) / S;
+    Z = Math.min(6, Math.max(1, nz)); S = board.clientWidth / W * Z;
+    TX = (cx - ox) - px * S; TY = (cy - oy) - py * S; fit();
+  }
+  function hideHint() { var g = document.getElementById('gHint'); if (g) g.style.opacity = '0'; }
+  if (MOB) {
+    board.addEventListener('pointerdown', function (e) {
+      touches.set(e.pointerId, { x:e.clientX, y:e.clientY });
+      if (touches.size === 2) {
+        if (live) { live = null; redrawAll(); } // second finger: it was a pinch, not a stroke
+        var p = Array.from(touches.values());
+        gest = { type:'pinch', d:Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) || 1, z:Z, mx:(p[0].x + p[1].x) / 2, my:(p[0].y + p[1].y) / 2, tx:TX, ty:TY };
+        hideHint(); return;
+      }
+      if (touches.size > 2) return;
+      var t = e.target;
+      if (tool && t === canvas) return; // drawing
+      if (t.closest('textarea, input, button, .note.is-mine, .note.is-editing') || (adminKey && t.closest('.polaroid'))) return;
+      gest = { type:'pan', x:e.clientX, y:e.clientY, tx:TX, ty:TY, moved:false };
+    }, true);
+    board.addEventListener('pointermove', function (e) {
+      if (!touches.has(e.pointerId)) return;
+      touches.set(e.pointerId, { x:e.clientX, y:e.clientY });
+      if (!gest) return;
+      if (gest.type === 'pinch' && touches.size >= 2) {
+        var p = Array.from(touches.values()), d = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y), mx = (p[0].x + p[1].x) / 2, my = (p[0].y + p[1].y) / 2;
+        // zoom around the starting midpoint, then follow the fingers
+        Z = gest.z; S = board.clientWidth / W * Z; TX = gest.tx; TY = gest.ty;
+        zoomAt(gest.z * d / gest.d, gest.mx, gest.my);
+        TX += mx - gest.mx; TY += my - gest.my; fit(); lastPan = Date.now();
+      } else if (gest.type === 'pan') {
+        var dx = e.clientX - gest.x, dy = e.clientY - gest.y;
+        if (!gest.moved && Math.hypot(dx, dy) < 6) return;
+        gest.moved = true; TX = gest.tx + dx; TY = gest.ty + dy; fit(); lastPan = Date.now(); hideHint();
+      }
+    }, true);
+    var endTouch = function (e) { touches.delete(e.pointerId); if (!touches.size) gest = null; else if (gest && gest.type === 'pinch' && touches.size < 2) gest = null; };
+    board.addEventListener('pointerup', endTouch, true); board.addEventListener('pointercancel', endTouch, true);
+    var cz = function (k) { var r = board.getBoundingClientRect(); zoomAt(Z * k, r.left + r.width / 2, r.top + r.height / 2); hideHint(); };
+    document.getElementById('zIn').onclick = function () { cz(1.5); };
+    document.getElementById('zOut').onclick = function () { cz(1 / 1.5); };
+    setTimeout(hideHint, 7000);
+    window.addEventListener('resize', fit);
+  }
+
   // ---------- zoom + hearts ----------
   function hearts(x, y) {
     var set = ['❤️', '💖', '💕', '💗', '💛', '🧡'];
@@ -678,7 +757,7 @@
     var cap = el('div'); cap.textContent = it.caption || ''; box.appendChild(cap); openZoom(box);
   }
   notesEl.addEventListener('click', function (e) {
-    if (document.body.classList.contains('is-drawing')) return;
+    if (document.body.classList.contains('is-drawing') || Date.now() - lastPan < 350) return;
     var ph = e.target.closest('.polaroid');
     if (ph) { if (e.target.closest('textarea') || ph.dataset.moved === '1') return; var pid = Object.keys(noteEls).find(function (k) { return noteEls[k] === ph; }); if (pid && items[pid]) zoomPhoto(items[pid]); return; }
     var n = e.target.closest('.note'); if (!n) return;
